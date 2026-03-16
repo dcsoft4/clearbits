@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{cef04a4d-7cc9-42ff-aba4-d5d4d017c572}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\MP3">
+      <UniqueIdentifier>{2bb395e2-5a34-499e-98cc-cec7250120b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dundas">
+      <UniqueIdentifier>{1395e1f8-cd41-4d7d-a8d9-79233f5c4856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Layout">
+      <UniqueIdentifier>{2df73845-3feb-4071-bedc-b99c0297d8b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{58257b1a-7759-4869-ac49-7cf636212b7c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{75fd0eb0-e545-4333-9bb7-98dbfce7b955}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="browsedlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClearBits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClearBitsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DibWnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Filename.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HyperLink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="REG.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SAMPBUF.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WINPLACE.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MP3\id3_int28.cpp">
+      <Filter>Source Files\MP3</Filter>
+    </ClCompile>
+    <ClCompile Include="MP3\MCWaveReader.cpp">
+      <Filter>Source Files\MP3</Filter>
+    </ClCompile>
+    <ClCompile Include="Dundas\OXInteger.cpp">
+      <Filter>Source Files\Dundas</Filter>
+    </ClCompile>
+    <ClCompile Include="Dundas\OXStatic.cpp">
+      <Filter>Source Files\Dundas</Filter>
+    </ClCompile>
+    <ClCompile Include="Dundas\UTBStrOp.cpp">
+      <Filter>Source Files\Dundas</Filter>
+    </ClCompile>
+    <ClCompile Include="Layout\Layout.c">
+      <Filter>Source Files\Layout</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="browsedlg.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DibWnd.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Options.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="REG.H">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MP3\id3_int28.h">
+      <Filter>Source Files\MP3</Filter>
+    </ClInclude>
+    <ClInclude Include="MP3\MCWaveReader.h">
+      <Filter>Source Files\MP3</Filter>
+    </ClInclude>
+    <ClInclude Include="Dundas\OXDllExt.h">
+      <Filter>Source Files\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="Dundas\OXInteger.h">
+      <Filter>Source Files\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="Dundas\OXStatic.h">
+      <Filter>Source Files\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="Dundas\UTB64Bit.h">
+      <Filter>Source Files\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="Dundas\utbstrop.h">
+      <Filter>Source Files\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="Layout\Layout.h">
+      <Filter>Source Files\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="Layout\Win95ADG.h">
+      <Filter>Source Files\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearBits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearBitsDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hyperlink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WINPLACE.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ClearBits.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dundas\OXInteger.inl">
+      <Filter>Source Files\Dundas</Filter>
+    </None>
+    <None Include="res\ClearBits.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\random.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ClearBits.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon_off.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon_on.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\logo256.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
