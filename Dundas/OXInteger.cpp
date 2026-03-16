@@ -7,7 +7,7 @@
 // Version: 9.3
 
 // This software along with its related components, documentation and files ("The Libraries")
-// is © 1994-2007 The Code Project (1612916 Ontario Limited) and use of The Libraries is
+// is ï¿½ 1994-2007 The Code Project (1612916 Ontario Limited) and use of The Libraries is
 // governed by a software license agreement ("Agreement").  Copies of the Agreement are
 // available at The Code Project (www.codeproject.com), as part of the package you downloaded
 // to obtain this file, or directly from our office.  For a copy of the license governing
@@ -19,7 +19,6 @@
 #include "OXInteger.h"
 
 #include "UTBStrOp.h"
-#include "UTB64Bit.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -182,7 +181,7 @@ CString COXInteger::ThousandSeparated(LPCTSTR pszOriginalNumberText, TCHAR cSepa
 		cSeparator = m_cDefaultSeparator;
 
 	// Insert thousand seperator
-	int nOriginalLength = PtrToInt(_tcslen(pszOriginalNumberText));
+	int nOriginalLength = _tcslen(pszOriginalNumberText);
 	LPCTSTR pszPart = pszOriginalNumberText;
 
 	int nNewLength = nOriginalLength + (nOriginalLength - 1) / nGroupLength;

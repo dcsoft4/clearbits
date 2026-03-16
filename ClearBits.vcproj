@@ -688,10 +688,7 @@
 					RelativePath="Dundas\OXStatic.h"
 					>
 				</File>
-				<File
-					RelativePath=".\Dundas\UTB64Bit.h"
-					>
-				</File>
+
 				<File
 					RelativePath=".\Dundas\UTBStrOp.cpp"
 					>

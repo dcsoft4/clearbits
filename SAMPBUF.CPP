@@ -44,7 +44,7 @@ BOOL CSampleBuffer::Alloc (UINT nMaxBufSize)
     
     m_pWaveHdr->lpData = (LPSTR) m_pData;
     m_pWaveHdr->dwFlags = 0;
-	m_pWaveHdr->dwUser = (DWORD) this;		// pointer to itself
+	m_pWaveHdr->dwUser = (DWORD_PTR) this;		// pointer to itself
 	return TRUE;
 }
 

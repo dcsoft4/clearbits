@@ -173,7 +173,7 @@ BOOL CClearBitsDlg::OpenOutDevice (WAVEFORMATEX *pwfx)
 		AfxMessageBox ("Opening device with WAVE_FORMAT_DIRECT");
 	}
 
-	MMRESULT result = waveOutOpen (&m_hWaveOut, uDeviceId, pwfx, (DWORD) GetSafeHwnd(), NULL, fdwOpen);	// ASSUME Wave Mapper device is OK
+	MMRESULT result = waveOutOpen (&m_hWaveOut, uDeviceId, pwfx, (DWORD_PTR) GetSafeHwnd(), NULL, fdwOpen);	// ASSUME Wave Mapper device is OK
 	if (result != MMSYSERR_NOERROR)
 	{
 		CString str;

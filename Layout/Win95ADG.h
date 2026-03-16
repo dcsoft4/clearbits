@@ -64,7 +64,7 @@ Purpose: Common header file for "Windows 95: A Developer's Guide"
 
 
 // If no CPU platform was specified, default to the current platform.
-#if !defined(_PPC_) && !defined(_ALPHA_) && !defined(_MIPS_) && !defined(_X86_)
+#if !defined(_PPC_) && !defined(_ALPHA_) && !defined(_MIPS_) && !defined(_X86_) && !defined(_AMD64_) && !defined(_ARM64_)
    #if defined(_M_IX86)
       #define _X86_
    #endif
@@ -76,6 +76,12 @@ Purpose: Common header file for "Windows 95: A Developer's Guide"
    #endif
    #if defined(_M_PPC)
       #define _PPC_
+   #endif
+   #if defined(_M_X64) || defined(_M_AMD64)
+      #define _AMD64_
+   #endif
+   #if defined(_M_ARM64)
+      #define _ARM64_
    #endif
 #endif
 
@@ -93,6 +99,8 @@ Purpose: Common header file for "Windows 95: A Developer's Guide"
    #define adgLIBCPUTYPE "Alph"
 #elif defined(_PPC_)
    #define adgLIBCPUTYPE "PPC"
+#elif defined(_AMD64_) || defined(_ARM64_)
+   #define adgLIBCPUTYPE "x64"
 #else
    #error Win95ADG.h : Unknown CPU platform.
 #endif
