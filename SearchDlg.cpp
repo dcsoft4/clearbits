@@ -70,7 +70,7 @@ void CSearchDlg::OnButtonGo()
 
 void CSearchDlg::OnSelchangeListFound() 
 {
-	m_nSelectedFile = m_lbFound.GetItemData ( m_lbFound.GetCurSel() );
+	m_nSelectedFile = (int) m_lbFound.GetItemData ( m_lbFound.GetCurSel() );
 }
 
 void CSearchDlg::OnDblclkListFound() 

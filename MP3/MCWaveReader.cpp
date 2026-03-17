@@ -490,7 +490,7 @@ bool McWaveReader::ReadMp3FrameHeader( void )
 
     p_wf->wID = MPEGLAYER3_ID_MPEG;
     p_wf->fdwFlags = patend;
-    p_wf->nBlockSize = s_Bitrates[version][bitrate] * 1000 * 144 / p_wf->wfx.nSamplesPerSec + patend;
+    p_wf->nBlockSize = (WORD)(s_Bitrates[version][bitrate] * 1000 * 144 / p_wf->wfx.nSamplesPerSec + patend);
 
     p_wf->nFramesPerBlock = 1;
 //  p_wf->nCodecDelay = 700;
@@ -639,7 +639,7 @@ DWORD McWaveReader::Decode( void )
             m_bFoundEnd = true;
 #else
 			// position file to re-read bytes that were not decoded
-	        ::mmioSeek( m_MmioHn, -(m_oAsh->cbSrcLength - m_oAsh->cbSrcLengthUsed), SEEK_CUR );
+            ::mmioSeek(m_MmioHn, -(LONG)(m_oAsh->cbSrcLength - m_oAsh->cbSrcLengthUsed), SEEK_CUR);
 #endif
             break;
         }

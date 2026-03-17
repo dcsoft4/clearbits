@@ -41,7 +41,7 @@ BOOL CClearBitsApp::InitInstance()
 
 #if 0
 	AfxMessageBox ("Setting process and thread priority", MB_OK);
-	if ( !::SetPriorityClass (GetCurrentProcess(), NORMAL_PRIORITY_CLASS) ||	// 
+	if ( !::SetPriorityClass (GetCurrentProcess(), NORMAL_PRIORITY_CLASS) ||	//
 		 !::SetThreadPriority (GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) ) // THREAD_PRIORITY_BELOW_NORMAL
 	{
 		AfxMessageBox ("Could not set priority", MB_OK);
@@ -60,7 +60,7 @@ BOOL CClearBitsApp::InitInstance()
 
 	CClearBitsDlg dlg;
 	m_pMainWnd = &dlg;
-	int nResponse = dlg.DoModal();
+	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
 		// TODO: Place code here to handle when the dialog is
@@ -82,7 +82,7 @@ BOOL CClearBitsApp::InitInstance()
 	return FALSE;
 }
 
-BOOL CClearBitsApp::ProcessMessageFilter(int code, LPMSG lpMsg) 
+BOOL CClearBitsApp::ProcessMessageFilter(int code, LPMSG lpMsg)
 {
 	// Make accelerators work in a MFC dialog-based app
 	if (code < 0)

@@ -181,7 +181,7 @@ CString COXInteger::ThousandSeparated(LPCTSTR pszOriginalNumberText, TCHAR cSepa
 		cSeparator = m_cDefaultSeparator;
 
 	// Insert thousand seperator
-	int nOriginalLength = _tcslen(pszOriginalNumberText);
+	int nOriginalLength = (int)_tcslen(pszOriginalNumberText);
 	LPCTSTR pszPart = pszOriginalNumberText;
 
 	int nNewLength = nOriginalLength + (nOriginalLength - 1) / nGroupLength;

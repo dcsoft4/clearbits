@@ -3,11 +3,11 @@
 
 CFileName::CFileName (LPCSTR pFileName)
 {
-	_splitpath (    pFileName,
-                    m_strDrive.GetBuffer(_MAX_DRIVE),
-                    m_strPath.GetBuffer (_MAX_DIR),
-                    m_strFile.GetBuffer (_MAX_FNAME),
-                    m_strExt.GetBuffer (_MAX_EXT) );
+	_splitpath_s(   pFileName,
+                    m_strDrive.GetBuffer(_MAX_DRIVE), _MAX_DRIVE,
+                    m_strPath.GetBuffer (_MAX_DIR),   _MAX_DIR,
+                    m_strFile.GetBuffer (_MAX_FNAME), _MAX_FNAME,
+                    m_strExt.GetBuffer (_MAX_EXT),   _MAX_EXT );
 
     m_strDrive.ReleaseBuffer();
     m_strPath.ReleaseBuffer();
@@ -51,8 +51,8 @@ void CFileName::SetExt (LPCSTR pExt)
 
 CFileName::operator LPCSTR()
 {
-	_makepath ( m_strEntireName.GetBuffer(_MAX_PATH),
-                m_strDrive, m_strPath, m_strFile, m_strExt );
+	_makepath_s( m_strEntireName.GetBuffer(_MAX_PATH), _MAX_PATH,
+                 m_strDrive, m_strPath, m_strFile, m_strExt );
 
     m_strEntireName.ReleaseBuffer();
 
