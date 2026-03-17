@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -68,19 +66,20 @@ END
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\icon_on.ico"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 61
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About ClearBits"
 FONT 8, "MS Shell Dlg 2", 0, 0, 0x0
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "ClearBits Music Player 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2001-2009 DC Software Design, Inc.\nPortions Copyright (c) 1995 by Jeffrey Richter.",IDC_STATIC,40,25,188,23
+    LTEXT           "ClearBits Music Player 1.01",IDC_STATIC,40,10,134,8,SS_NOPREFIX
+    LTEXT           "Copyright (c) 2001-2026 DC Software\nPortions Copyright (c) 1995 by Jeffrey Richter\nUltimate Toolbox is Copyright (c) Dundas Software Ltd.",IDC_STATIC,40,26,188,23
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
 END
 
@@ -90,8 +89,8 @@ EXSTYLE WS_EX_APPWINDOW
 CAPTION "ClearBits"
 FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
 BEGIN
-    CONTROL         134,IDC_STATIC_LOGO,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,67,20
-    LTEXT           "C L E A R B I T S   M U S I C   P L A Y E R",IDC_STATIC_TITLE,7,25,144,8
+    CONTROL         IDB_LOGO,IDC_STATIC_LOGO,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,67,20
+    LTEXT           "C L E A R B I T S   M U S I C   P L A Y E R",IDC_STATIC_TITLE,7,25,272,8
     RTEXT           "44 KHz / 16 bit / Stereo",IDC_STATIC_OUTPUT_FORMAT,254,7,102,8
     LTEXT           "Audio Buffer Size",IDC_STATIC,7,48,74,8,SS_NOTIFY
     PUSHBUTTON      "<< &Back",IDC_BUTTON_PREV,125,58,50,14
@@ -108,7 +107,7 @@ BEGIN
     RTEXT           "0",IDC_STATIC_PROGRESS,254,16,102,8
 END
 
-IDD_DIALOG_WAVEOUT DIALOG  0, 0, 186, 231
+IDD_DIALOG_WAVEOUT DIALOG 0, 0, 186, 231
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Wave Output Capabilities"
 FONT 8, "MS Shell Dlg 2"
@@ -126,7 +125,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,129,210,50,14
 END
 
-IDD_SEARCH DIALOG  0, 0, 293, 206
+IDD_SEARCH DIALOG 0, 0, 293, 206
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Search"
 FONT 8, "MS Shell Dlg 2"
@@ -140,7 +139,7 @@ BEGIN
     PUSHBUTTON      "&Cancel",IDCANCEL,236,185,50,14
 END
 
-IDD_DIALOG_WAVEIN DIALOG  0, 0, 186, 231
+IDD_DIALOG_WAVEIN DIALOG 0, 0, 186, 231
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Wave Input Capabilities"
 FONT 8, "MS Shell Dlg 2"
@@ -152,7 +151,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,129,210,50,14
 END
 
-IDD_SEEK DIALOG  0, 0, 162, 47
+IDD_SEEK DIALOG 0, 0, 162, 47
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Seek"
 FONT 8, "MS Sans Serif"
@@ -170,8 +169,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 1,0,0,0
+ FILEVERSION 1,0,1,0
+ PRODUCTVERSION 1,0,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -186,15 +185,15 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "DC Software Design, Inc."
+            VALUE "CompanyName", "DC Software"
             VALUE "FileDescription", "ClearBits Music Player"
-            VALUE "FileVersion", "1, 0, 0, 0"
+            VALUE "FileVersion", "1.0.1.0"
             VALUE "InternalName", "ClearBits"
-            VALUE "LegalCopyright", "Copyright (C) 2001-2009 DC Software Design, Inc."
-            VALUE "LegalTrademarks", "ClearBits (TM) is a trademark of DC Software Design, Inc."
+            VALUE "LegalCopyright", "Copyright (C) 2001-2026 DC Software"
+            VALUE "LegalTrademarks", "ClearBits (TM) is a trademark of DC Software"
             VALUE "OriginalFilename", "ClearBits.exe"
             VALUE "ProductName", "ClearBits Music Player"
-            VALUE "ProductVersion", "1, 0, 0, 0"
+            VALUE "ProductVersion", "1.0.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -210,14 +209,14 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 228
         TOPMARGIN, 7
-        BOTTOMMARGIN, 48
+        BOTTOMMARGIN, 54
     END
 
     IDD_CLEARBITS_DIALOG, DIALOG
@@ -268,7 +267,7 @@ END
 // Accelerator
 //
 
-IDR_ACCELERATOR1 ACCELERATORS 
+IDR_ACCELERATOR1 ACCELERATORS
 BEGIN
     VK_DELETE,      IDC_BUTTON_DEL,         VIRTKEY, NOINVERT
     "D",            IDC_BUTTON_DELFILE,     VIRTKEY, CONTROL, NOINVERT
@@ -287,12 +286,14 @@ END
 
 IDB_LOGO                BITMAP                  "res\\logo256.bmp"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // BIN
 //
 
 IDR_BIN_RANDOM_DATA     BIN                     "res\\random.bin"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -317,16 +318,32 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_CLEARBITS_DIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ABOUTBOX            "&About ClearBits..."
     IDS_OPTIONS_REGKEY      "Software\\DCSoft\\ClearBits"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
