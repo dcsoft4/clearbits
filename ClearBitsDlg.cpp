@@ -582,6 +582,11 @@ void CClearBitsDlg::SetAlgo (UINT nNewAlgo)
 }
 
 
+void CClearBitsDlg::OnAlgoFixed()     { m_cbAlgo.SetCurSel(ALGO_FIXED); OnCbnSelchangeComboAlgo(); }
+void CClearBitsDlg::OnAlgoVC()        { m_cbAlgo.SetCurSel(ALGO_VC); OnCbnSelchangeComboAlgo(); }
+void CClearBitsDlg::OnAlgoCAPI()      { m_cbAlgo.SetCurSel(ALGO_CAPI); OnCbnSelchangeComboAlgo(); }
+void CClearBitsDlg::OnAlgoRandomOrg() { m_cbAlgo.SetCurSel(ALGO_RANDOM_ORG); OnCbnSelchangeComboAlgo(); }
+
 
 void CClearBitsDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -631,6 +636,10 @@ BEGIN_MESSAGE_MAP(CClearBitsDlg, CDialog)
 	ON_MESSAGE (MM_WOM_DONE, OnBufPlayed)
     ON_MESSAGE (WM_APPCOMMAND, OnAppCommand)
 	ON_CBN_SELCHANGE(IDC_COMBO_ALGO, &CClearBitsDlg::OnCbnSelchangeComboAlgo)
+	ON_COMMAND(ID_ALGO_FIXED,      OnAlgoFixed)
+	ON_COMMAND(ID_ALGO_VC,         OnAlgoVC)
+	ON_COMMAND(ID_ALGO_CAPI,       OnAlgoCAPI)
+	ON_COMMAND(ID_ALGO_RANDOM_ORG, OnAlgoRandomOrg)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

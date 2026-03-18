@@ -64,13 +64,17 @@
 #define IDC_STATIC_CHOOSE_CLEARBITS     1040
 #define IDC_SLIDER_CRYPTO_SIZE          1041
 #define IDC_STATIC_CRYPTO_SIZE          1043
+#define ID_ALGO_FIXED                   32778
+#define ID_ALGO_VC                      32779
+#define ID_ALGO_CAPI                    32780
+#define ID_ALGO_RANDOM_ORG              32781
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
-#define _APS_NEXT_COMMAND_VALUE         32778
+#define _APS_NEXT_COMMAND_VALUE         32782
 #define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

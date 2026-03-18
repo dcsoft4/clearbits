@@ -102,6 +102,10 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnCbnSelchangeComboAlgo();
 	//}}AFX_MSG
+	afx_msg void OnAlgoFixed();
+	afx_msg void OnAlgoVC();
+	afx_msg void OnAlgoCAPI();
+	afx_msg void OnAlgoRandomOrg();
     afx_msg LRESULT OnBufPlayed (WPARAM, LPARAM);
     afx_msg LRESULT OnAppCommand (WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
@@ -160,5 +164,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-
