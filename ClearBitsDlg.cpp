@@ -249,11 +249,11 @@ LONG CClearBitsDlg::GetNextBufSize()
 	// Added to that is a random number of samples from 0-64KB.  CD Quality ==> each sample has 4 bytes
 	// Therefore each buffer size ranges from 352.8 KB to (352.8 KB + (64 KB * 4)) = 608.8 KB
 
-	LONG lBufSize;
+	LONG lBufSize = GetNextBufSize_Fixed();  // safe default
 	switch (m_nAlgo)
 	{
 		case ALGO_FIXED:
-			lBufSize = GetNextBufSize_Fixed();
+			//lBufSize = GetNextBufSize_Fixed();
 			break;
 
 		case ALGO_VC:

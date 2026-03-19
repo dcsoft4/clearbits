@@ -3,34 +3,30 @@
 ![ClearBits Screenshot](Doc/ClearBitsSS.png)
 
 ## Welcome
-The ClearBits Music Player (ClearBits.exe) is a small C++/MFC app that demonstrates the ClearBits audio enhancement by playing a list of WAVE / MP3 files while allowing the Audio Buffer Size algorithm to be changed on-the-fly.
+ClearBits is a technique that varies audio buffer sizes during playback in order to explore whether such changes may affect the perceived sound quality of audio.
 
-ClearBits is a technique of using randomly sized audio buffers to potentially improve the perceptual sound quality of audio playback.
+The ClearBits Music Player (ClearBits.exe) is a Windows-based audio player app that allows enabling and disabling of the ClearBits technique while playing the user's choice of WAVE / MP3 audio files and to easily seek within them.  It is intended to allow users to evaluate the ClearBits effect for for themselves using familiar and repeatable audio sources.
 
-Please see the [home page](https://dcsoft.com/products/clearbits) for full information
+Please see the [home page](https://dcsoft.com/products/clearbits) for full information.
 
 &nbsp;
 
-## Next Step:  ABX Evaluation of ClearBits
+## Next Step:  Add ABX functionality into the ClearBits Music Player
 
-ClearBits is particularly well suited to ABX-style listening because the effect can be engaged or disengaged during continuous playback of the same audio stream.  In many traditional ABX setups, listeners compare separately rendered audio samples and must rely on short-term auditory memory while switching between sources. This often requires careful synchronization and rapid switching to remain effective.
+Listeners who perceive a difference in casual listening may not always demonstrate statistically significant results in ABX testing.  ClearBits is particularly well suited to ABX-style listening because the effect can be engaged or disengaged during continuous playback of the same audio stream.
 
-With ClearBits, the listener can switch between conditions (e.g., fixed vs randomized buffer sizes) while the same track is playing. Because both conditions operate on the same underlying audio stream, playback remains inherently level-matched and time-aligned, avoiding common confounding factors such as small volume differences or mismatched playback positions.
+This avoids the need to synchronize multiple audio streams and ensures time and level alignment when switching between conditions, reducing the listener's reliance on short-term auditory memory.  At the same time, it allows the listener to control pacing, repeat passages, and explore both short and longer listening intervals.
 
-When switching, playback is briefly muted, repositioned to a fixed recent point within the same passage, and resumed. This allows repeated comparison of identical musical context under different conditions.
+To ensure that the transition itself does not reveal which mode is active, switching conditions briefly mute playback, reposition to a recent (or optionally user-selected fixed) point within the same passage, and resume playback, allowing repeated comparison of identical musical context under different conditions.
 
 Because the new buffer behavior takes effect almost immediately, the listener can evaluate differences without requiring long settling periods.
 
-To minimize non-audio cues, switching uses a consistent, brief mute and resume sequence so that the transition itself does not reveal which mode is active. The rewind interval and timing behavior are fixed, ensuring that comparisons remain consistent across trials.
-
-This approach reduces reliance on auditory memory and avoids the need to align multiple playback streams. At the same time, it allows the listener to control pacing, repeat passages, and explore both short and longer listening intervals.
-
-Overall, ClearBits provides a simple and practical way to explore whether differences are perceptible under controlled yet natural listening conditions.  Therefore, it makes sense to create an ABX app for ClearBits.
+Overall, ClearBits provides a simple and practical way to explore whether differences are perceptible under controlled yet natural listening conditions.  For this reason, adding ABX functionality allows listeners to evaluate whether perceived differences can be detected reliably under controlled comparison.
 
 
 ### Sample UI
 
-Here is a potential UI for the ABX app.
+Here is a potential UI for the ABX extension.
 
 ![ABX UI](Doc/abx_ui.png)
 
