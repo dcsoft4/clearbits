@@ -17,7 +17,7 @@
 #ifndef WM_APPCOMMAND
     // WinUser.h only defines #if(_WIN32_WINNT >= 0x0500)
     // Doesn't hurt to define these for previous Winodws OS's, they will just be ignored
-    #define WM_APPCOMMAND 0x0319    
+    #define WM_APPCOMMAND 0x0319
     #define APPCOMMAND_MEDIA_NEXTTRACK        11
     #define APPCOMMAND_MEDIA_PREVIOUSTRACK    12
     #define APPCOMMAND_MEDIA_STOP             13
@@ -195,7 +195,7 @@ BOOL CClearBitsDlg::OpenOutDevice (WAVEFORMATEX *pwfx)
 }
 
 
-BOOL CClearBitsDlg::CloseOutDevice (BOOL bCloseImmediately) 
+BOOL CClearBitsDlg::CloseOutDevice (BOOL bCloseImmediately)
 {
 	if ( !m_hWaveOut )	// device not open
 		return TRUE;
@@ -211,7 +211,7 @@ BOOL CClearBitsDlg::CloseOutDevice (BOOL bCloseImmediately)
 
 		result = waveOutClose (hWaveOutTemp);
 
-		// Restore m_hWaveOut in case waveOutClose() failed; 
+		// Restore m_hWaveOut in case waveOutClose() failed;
 		if (result != MMSYSERR_NOERROR)
 			m_hWaveOut = hWaveOutTemp;
 	}
@@ -382,14 +382,21 @@ void CClearBitsDlg::PlayBuffer (CSampleBuffer *pSB)
 		MMRESULT result = waveOutWrite (m_hWaveOut, pSB->m_pWaveHdr, sizeof (WAVEHDR)) ;
 		ASSERT (result == MMSYSERR_NOERROR);
 	}
-}													   
+}
 
 
-BOOL CClearBitsDlg::Play (BOOL bPlayImmediately) 
+BOOL CClearBitsDlg::Play (BOOL bPlayImmediately)
 {
     int nSel = m_lbWaveFiles.GetCurSel();
+	if (nSel < 0)
+	{
+		// Select first selection if there is no selection;
+		// this can happen when Play is pressed for the first time after loading files
+		nSel = 0;
+		m_lbWaveFiles.SetCurSel(nSel);
+	}
 
-	if (m_WaveReader.IsOpen() || (m_lbWaveFiles.GetCount() == 0) || (nSel < 0))	// already playing, no files to play, or no selected file
+	if (m_WaveReader.IsOpen() || (m_lbWaveFiles.GetCount() == 0))	// already playing, no files to play
 		return TRUE;			// nothing to do
 
 	CString strCurFile;
@@ -440,7 +447,7 @@ BOOL CClearBitsDlg::Play (BOOL bPlayImmediately)
 }
 
 
-void CClearBitsDlg::CloseFile() 
+void CClearBitsDlg::CloseFile()
 {
 	m_WaveReader.Close();
 
@@ -451,7 +458,7 @@ void CClearBitsDlg::CloseFile()
 
 
 
-void CClearBitsDlg::Pause() 
+void CClearBitsDlg::Pause()
 {
 	// Save currently playing file and position so when Play is pressed again,
 	// we can restore it and start playing from this spot.
@@ -465,7 +472,7 @@ void CClearBitsDlg::Pause()
 }
 
 
-void CClearBitsDlg::Stop() 
+void CClearBitsDlg::Stop()
 {
 	CloseFile();
 
@@ -582,10 +589,31 @@ void CClearBitsDlg::SetAlgo (UINT nNewAlgo)
 }
 
 
-void CClearBitsDlg::OnAlgoFixed()     { m_cbAlgo.SetCurSel(ALGO_FIXED); OnCbnSelchangeComboAlgo(); }
-void CClearBitsDlg::OnAlgoVC()        { m_cbAlgo.SetCurSel(ALGO_VC); OnCbnSelchangeComboAlgo(); }
-void CClearBitsDlg::OnAlgoCAPI()      { m_cbAlgo.SetCurSel(ALGO_CAPI); OnCbnSelchangeComboAlgo(); }
-void CClearBitsDlg::OnAlgoRandomOrg() { m_cbAlgo.SetCurSel(ALGO_RANDOM_ORG); OnCbnSelchangeComboAlgo(); }
+BOOL CClearBitsDlg::OnHelpInfo(HELPINFO*)
+{
+    // F1 key pressed - show help; we have no help file, so just return TRUE to suppress error about the missing help file
+    return TRUE;
+}
+
+void CClearBitsDlg::OnAlgoFixed()
+{
+    m_cbAlgo.SetCurSel(ALGO_FIXED); OnCbnSelchangeComboAlgo();
+}
+
+void CClearBitsDlg::OnAlgoVC()
+{
+    m_cbAlgo.SetCurSel(ALGO_VC); OnCbnSelchangeComboAlgo();
+}
+
+void CClearBitsDlg::OnAlgoCAPI()
+{
+    m_cbAlgo.SetCurSel(ALGO_CAPI); OnCbnSelchangeComboAlgo();
+}
+
+void CClearBitsDlg::OnAlgoRandomOrg()
+{
+    m_cbAlgo.SetCurSel(ALGO_RANDOM_ORG); OnCbnSelchangeComboAlgo();
+}
 
 
 void CClearBitsDlg::DoDataExchange(CDataExchange* pDX)
@@ -632,6 +660,7 @@ BEGIN_MESSAGE_MAP(CClearBitsDlg, CDialog)
 	ON_WM_QUERYNEWPALETTE()
 	ON_WM_PALETTECHANGED()
 	ON_WM_SIZE()
+	ON_WM_HELPINFO()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE (MM_WOM_DONE, OnBufPlayed)
     ON_MESSAGE (WM_APPCOMMAND, OnAppCommand)
@@ -672,12 +701,12 @@ BOOL CClearBitsDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// 256 color logo	
+	// 256 color logo
 	m_LogoDibWnd.SetDib (AfxGetResourceHandle(), IDB_LOGO, TRUE);
 	VERIFY (m_LogoDibWnd.SubclassDlgItem (IDC_STATIC_LOGO, this));
-	
+
 	// Static text controls bolded
-	LOGFONT lf;							   
+	LOGFONT lf;
 	VERIFY (m_staticTitle.GetTextLogFont(&lf));
 	lf.lfWeight = FW_BOLD;
 	m_fontBold.CreateFontIndirect (&lf);
@@ -692,7 +721,7 @@ BOOL CClearBitsDlg::OnInitDialog()
 	// Init buffer sizing
 	// Seed the random number generator
 	srand( (unsigned)time( NULL ) );
-	
+
 	VERIFY ( CryptAcquireContext(&m_hProvider, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT) );
     if ( !m_hProvider )
         AfxMessageBox (_T("Warning:  Could not initialize ClearBits subsystem (internal error 1"));
@@ -708,7 +737,7 @@ BOOL CClearBitsDlg::OnInitDialog()
 	int i;
 	for (i=0; i < NUM_SAMPLE_BUFFERS; i++)
 	{
-		m_arrSB[i].Alloc (MAX_SOUNDBUF_SIZE);	
+		m_arrSB[i].Alloc (MAX_SOUNDBUF_SIZE);
 	}
 
 	for (i=0; i < NUM_SAMPLE_BUFFERS; i++)
@@ -718,7 +747,7 @@ BOOL CClearBitsDlg::OnInitDialog()
 	// Load window position from profile
 	CWindowPlacement wp;
 	wp.Restore( _T("WindowPos"), this );
-	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -727,7 +756,7 @@ BOOL CClearBitsDlg::OnInitDialog()
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CClearBitsDlg::OnPaint() 
+void CClearBitsDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -789,7 +818,7 @@ LRESULT CClearBitsDlg::OnAppCommand (WPARAM, LPARAM lParam)
             bHandled = TRUE;
             break;
         }
-        
+
         case APPCOMMAND_MEDIA_STOP:
         {
             _OnButtonPlayPause (TRUE);
@@ -810,7 +839,7 @@ LRESULT CClearBitsDlg::OnAppCommand (WPARAM, LPARAM lParam)
             bHandled = TRUE;
             break;
         }
-        
+
         default:
             bHandled = FALSE;
             break;
@@ -819,7 +848,7 @@ LRESULT CClearBitsDlg::OnAppCommand (WPARAM, LPARAM lParam)
     return bHandled;
 }
 
-void CClearBitsDlg::OnButtonLoad() 
+void CClearBitsDlg::OnButtonLoad()
 {
 	CString strFilename;
 	OPENFILENAME ofn;
@@ -858,7 +887,7 @@ void CClearBitsDlg::OnButtonLoad()
 
 
 
-void CClearBitsDlg::SavePlaylist() 
+void CClearBitsDlg::SavePlaylist()
 {
 	if ( m_strPlaylistFile.IsEmpty() )
 	{
@@ -921,8 +950,8 @@ void CClearBitsDlg::SavePlaylist()
 }
 
 
-	
-void CClearBitsDlg::OnButtonClear() 
+
+void CClearBitsDlg::OnButtonClear()
 {
 	// File now being played is not in the new list so stop playback
 	Stop();
@@ -936,13 +965,13 @@ void CClearBitsDlg::OnButtonClear()
 }
 
 
-void CClearBitsDlg::OnDblclkListWavefiles() 
+void CClearBitsDlg::OnDblclkListWavefiles()
 {
 	Stop();
 	Play (TRUE);		// Start playback at current file
 }
 
-void CClearBitsDlg::OnSelchangeListWavefiles() 
+void CClearBitsDlg::OnSelchangeListWavefiles()
 {
 	BOOL bIsPlaying = m_WaveReader.IsOpen();
 
@@ -954,7 +983,7 @@ void CClearBitsDlg::OnSelchangeListWavefiles()
 
 
 
-void CClearBitsDlg::_OnButtonPlayPause (BOOL bCtrlKeyPressed) 
+void CClearBitsDlg::_OnButtonPlayPause (BOOL bCtrlKeyPressed)
 {
 	if ( m_WaveReader.IsOpen() )
 	{
@@ -971,7 +1000,7 @@ void CClearBitsDlg::_OnButtonPlayPause (BOOL bCtrlKeyPressed)
 
 
 
-void CClearBitsDlg::OnButtonPlayPause() 
+void CClearBitsDlg::OnButtonPlayPause()
 {
     BOOL bCtrlKeyPressed = ( (GetKeyState(VK_CONTROL) & 0x8000) != 0 );
     _OnButtonPlayPause (bCtrlKeyPressed);
@@ -979,7 +1008,7 @@ void CClearBitsDlg::OnButtonPlayPause()
 
 
 
-void CClearBitsDlg::OnButtonNext() 
+void CClearBitsDlg::OnButtonNext()
 {
 	BOOL bIsPlaying = m_WaveReader.IsOpen();
 	Stop();
@@ -992,7 +1021,7 @@ void CClearBitsDlg::OnButtonNext()
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::OnButtonPrev() 
+void CClearBitsDlg::OnButtonPrev()
 {
 	BOOL bIsPlaying = m_WaveReader.IsOpen();
 	Stop();
@@ -1007,7 +1036,7 @@ void CClearBitsDlg::OnButtonPrev()
 
 
 
-void CClearBitsDlg::OnButtonSearch() 
+void CClearBitsDlg::OnButtonSearch()
 {
 	CSearchDlg dlg;
 	if ( (dlg.DoModal() == IDOK) && (dlg.m_nSelectedFile >= 0) )
@@ -1024,7 +1053,7 @@ void CClearBitsDlg::OnButtonSearch()
 
 
 
-void CClearBitsDlg::OnDestroy() 
+void CClearBitsDlg::OnDestroy()
 {
 	// ASSUME this is called no matter how program is ended
 	CDialog::OnDestroy();
@@ -1066,7 +1095,7 @@ void CClearBitsDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 
 
-void CClearBitsDlg::OnCheckRandom() 
+void CClearBitsDlg::OnCheckRandom()
 {
 	UpdateData();
 	m_lbWaveFiles.SetFocus();
@@ -1074,7 +1103,7 @@ void CClearBitsDlg::OnCheckRandom()
 
 
 
-void CClearBitsDlg::OnButtonDelete() 
+void CClearBitsDlg::OnButtonDelete()
 {
 	BOOL bShiftKeyPressed = ( (GetKeyState(VK_SHIFT) & 0x8000) != 0 );
 	if (bShiftKeyPressed)
@@ -1085,38 +1114,38 @@ void CClearBitsDlg::OnButtonDelete()
 
 
 
-void CClearBitsDlg::DeleteFileFromPlaylist() 
+void CClearBitsDlg::DeleteFileFromPlaylist()
 {
     int nSel = m_lbWaveFiles.GetCurSel();
 	if ( (m_lbWaveFiles.GetCount() > 0) && (nSel >= 0))	// selected file
 	{
 		BOOL bIsPlaying = m_WaveReader.IsOpen();
 		Stop();
-		
+
 		// delete from listbox
 		m_lbWaveFiles.DeleteString (nSel);
-		
+
 		// Save playlist
 		SavePlaylist();
-		
+
 		if (nSel >= m_lbWaveFiles.GetCount())
 			nSel = m_lbWaveFiles.GetCount();
-		
+
 		// Select next file in list
 		if (nSel >= 0)	// valid selection
 		{
 			m_lbWaveFiles.SetCurSel (nSel);
-			
+
 			// Resume playback
 			if (bIsPlaying)
 				Play (TRUE);
 		}
 	}
-	
+
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::DeleteFileFromDisk() 
+void CClearBitsDlg::DeleteFileFromDisk()
 {
     int nSel = m_lbWaveFiles.GetCurSel();
 	if ( (m_lbWaveFiles.GetCount() > 0) && (nSel >= 0))	// selected file
@@ -1152,7 +1181,7 @@ void CClearBitsDlg::DeleteFileFromDisk()
 }
 
 
-void CClearBitsDlg::OnSeekBackFast() 
+void CClearBitsDlg::OnSeekBackFast()
 {
 	m_WaveReader.Seek ( m_WaveReader.GetProgress() - m_WaveReader.GetWaveFormat()->nAvgBytesPerSec * 60 );
 	if (m_hWaveOut)
@@ -1161,7 +1190,7 @@ void CClearBitsDlg::OnSeekBackFast()
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::OnSeekBackSlow() 
+void CClearBitsDlg::OnSeekBackSlow()
 {
 	m_WaveReader.Seek ( m_WaveReader.GetProgress() - m_WaveReader.GetWaveFormat()->nAvgBytesPerSec * 10 );
 	if (m_hWaveOut)
@@ -1170,7 +1199,7 @@ void CClearBitsDlg::OnSeekBackSlow()
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::OnSeekForwardSlow() 
+void CClearBitsDlg::OnSeekForwardSlow()
 {
 	m_WaveReader.Seek ( m_WaveReader.GetProgress() + m_WaveReader.GetWaveFormat()->nAvgBytesPerSec * 10 );
 	if (m_hWaveOut)
@@ -1179,7 +1208,7 @@ void CClearBitsDlg::OnSeekForwardSlow()
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::OnSeekForwardFast() 
+void CClearBitsDlg::OnSeekForwardFast()
 {
 	m_WaveReader.Seek ( m_WaveReader.GetProgress() + m_WaveReader.GetWaveFormat()->nAvgBytesPerSec * 60 );
 	if (m_hWaveOut)
@@ -1188,7 +1217,7 @@ void CClearBitsDlg::OnSeekForwardFast()
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::OnStaticProgress() 
+void CClearBitsDlg::OnStaticProgress()
 {
 	CSeekDlg dlg;
 	if (dlg.DoModal() == IDOK)
@@ -1201,7 +1230,7 @@ void CClearBitsDlg::OnStaticProgress()
 	m_lbWaveFiles.SetFocus();
 }
 
-void CClearBitsDlg::OnDropFiles(HDROP hDropInfo) 
+void CClearBitsDlg::OnDropFiles(HDROP hDropInfo)
 {
 	SetForegroundWindow();      // activate us first !
 
@@ -1215,11 +1244,11 @@ void CClearBitsDlg::OnDropFiles(HDROP hDropInfo)
 		if ( !strFilename.IsEmpty() && !AddToPlayList (strFilename) )
 			AfxMessageBox ( _T("Error loading play list") );
 	}
-	
+
 	::DragFinish(hDropInfo);
 }
 
-void CClearBitsDlg::OnButtonMove() 
+void CClearBitsDlg::OnButtonMove()
 {
 	// Move the selected file
 	int nSel = m_lbWaveFiles.GetCurSel();
@@ -1290,20 +1319,20 @@ void CClearBitsDlg::OnButtonMove()
 	}
 }
 
-BOOL CClearBitsDlg::OnQueryNewPalette() 
+BOOL CClearBitsDlg::OnQueryNewPalette()
 {
 	m_LogoDibWnd.OnQueryNewPalette (GetSafeHwnd());
 	return CDialog::OnQueryNewPalette();
 }
 
-void CClearBitsDlg::OnPaletteChanged(CWnd* pFocusWnd) 
+void CClearBitsDlg::OnPaletteChanged(CWnd* pFocusWnd)
 {
 	CDialog::OnPaletteChanged(pFocusWnd);
 	m_LogoDibWnd.OnPaletteChanged (GetSafeHwnd(), (WPARAM) pFocusWnd);
 }
 
 
-void CClearBitsDlg::OnSize(UINT nType, int cx, int cy) 
+void CClearBitsDlg::OnSize(UINT nType, int cx, int cy)
 {
 	static RULE s_rules[] =
 	{
@@ -1327,7 +1356,7 @@ void CClearBitsDlg::OnSize(UINT nType, int cx, int cy)
 	};
 
 	CDialog::OnSize(nType, cx, cy);
-	
+
 	if (GetSafeHwnd() && (cx > 0) && (cy > 0) )
 	{
 		// Place the dialog's child controls according to the rules. If there is

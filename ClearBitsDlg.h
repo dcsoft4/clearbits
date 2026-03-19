@@ -101,6 +101,7 @@ protected:
 	afx_msg void OnPaletteChanged(CWnd* pFocusWnd);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnCbnSelchangeComboAlgo();
+	afx_msg BOOL OnHelpInfo(HELPINFO*);
 	//}}AFX_MSG
 	afx_msg void OnAlgoFixed();
 	afx_msg void OnAlgoVC();
