@@ -50,6 +50,29 @@ Windows system libraries (no external packages):
 - `vfw32.lib` — Video for Windows
 - Static MFC linkage (v145 toolset)
 
+## Current Task
+Prepare to add a new target:  a Qt/QtQuick (QML) version of the app.
+This will create a new .vcprojx called ClearBitsQt, which shares the same audio pipeline and buffer-sizing code but replaces the MFC UI with a Qt-based one.
+The goal is to demonstrate that the ClearBits technique can be implemented in a modern cross-platform framework while retaining the same core functionality.
+
+### Immediate tasks
+1. Create a new project file called MFC and move the MFC related Source files in the project to it:
+	* ClearBitsDlg.h
+	* ClearBitsDlg.cpp
+	* hyperlink.h
+	* SearchDlg.h
+	* SearchDlg.cpp
+	* SeekDlg.h
+	* Dundas\ (and all its files within)
+	* Layout\ (and all its files within)
+	* DibWnd.cpp
+	* DibWnd.h
+	* HyperLink.cpp
+2. Build the result with buildcpp.ps1, fix errors as needed until success.
+
+
+
+
 ## Proposed Future Work
 
 The README describes a planned **ABX testing UI** — a separate app (or mode) that presents three audio samples (A, B, X) across multiple trials and computes binomial confidence statistics. See `readme.md` and `doc/abx_ui.png` for the UI mockup.

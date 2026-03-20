@@ -65,7 +65,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;MP3;Dundas;Layout;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;MP3;MFC;MFC\Dundas;MFC\Layout;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -106,7 +106,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.;MP3;Dundas;Layout;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;MP3;MFC;MFC\Dundas;MFC\Layout;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -142,14 +142,14 @@
   <ItemGroup>
     <ClCompile Include="browsedlg.cpp" />
     <ClCompile Include="ClearBits.cpp" />
-    <ClCompile Include="ClearBitsDlg.cpp" />
-    <ClCompile Include="DibWnd.cpp" />
-    <ClCompile Include="Dundas\OXInteger.cpp" />
-    <ClCompile Include="Dundas\OXStatic.cpp" />
-    <ClCompile Include="Dundas\UTBStrOp.cpp" />
+    <ClCompile Include="MFC\ClearBitsDlg.cpp" />
+    <ClCompile Include="MFC\DibWnd.cpp" />
+    <ClCompile Include="MFC\Dundas\OXInteger.cpp" />
+    <ClCompile Include="MFC\Dundas\OXStatic.cpp" />
+    <ClCompile Include="MFC\Dundas\UTBStrOp.cpp" />
     <ClCompile Include="Filename.cpp" />
-    <ClCompile Include="HyperLink.cpp" />
-    <ClCompile Include="Layout\Layout.c">
+    <ClCompile Include="MFC\HyperLink.cpp" />
+    <ClCompile Include="MFC\Layout\Layout.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,8 +161,8 @@
     <ClCompile Include="REG.CPP" />
     <ClCompile Include="ResFile.cpp" />
     <ClCompile Include="SAMPBUF.CPP" />
-    <ClCompile Include="SearchDlg.cpp" />
-    <ClCompile Include="SeekDlg.cpp" />
+    <ClCompile Include="MFC\SearchDlg.cpp" />
+    <ClCompile Include="MFC\SeekDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -172,23 +172,23 @@
   <ItemGroup>
     <ClInclude Include="browsedlg.h" />
     <ClInclude Include="ClearBits.h" />
-    <ClInclude Include="ClearBitsDlg.h" />
-    <ClInclude Include="DibWnd.h" />
-    <ClInclude Include="Dundas\OXDllExt.h" />
-    <ClInclude Include="Dundas\OXInteger.h" />
-    <ClInclude Include="Dundas\OXStatic.h" />
-    <ClInclude Include="Dundas\utbstrop.h" />
-    <ClInclude Include="hyperlink.h" />
-    <ClInclude Include="Layout\Layout.h" />
-    <ClInclude Include="Layout\Win95ADG.h" />
+    <ClInclude Include="MFC\ClearBitsDlg.h" />
+    <ClInclude Include="MFC\DibWnd.h" />
+    <ClInclude Include="MFC\Dundas\OXDllExt.h" />
+    <ClInclude Include="MFC\Dundas\OXInteger.h" />
+    <ClInclude Include="MFC\Dundas\OXStatic.h" />
+    <ClInclude Include="MFC\Dundas\utbstrop.h" />
+    <ClInclude Include="MFC\hyperlink.h" />
+    <ClInclude Include="MFC\Layout\Layout.h" />
+    <ClInclude Include="MFC\Layout\Win95ADG.h" />
     <ClInclude Include="MP3\id3_int28.h" />
     <ClInclude Include="MP3\MCWaveReader.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="REG.H" />
     <ClInclude Include="ResFile.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SearchDlg.h" />
-    <ClInclude Include="SeekDlg.h" />
+    <ClInclude Include="MFC\SearchDlg.h" />
+    <ClInclude Include="MFC\SeekDlg.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="WINPLACE.H" />
   </ItemGroup>
@@ -196,7 +196,8 @@
     <ResourceCompile Include="ClearBits.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Dundas\OXInteger.inl" />
+    <None Include="CLAUDE.md" />
+    <None Include="MFC\Dundas\OXInteger.inl" />
     <None Include="readme.md" />
     <None Include="res\ClearBits.rc2" />
     <None Include="res\random.bin" />
