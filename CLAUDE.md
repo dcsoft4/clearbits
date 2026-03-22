@@ -69,6 +69,8 @@ The goal is to demonstrate that the ClearBits technique can be implemented in a 
 	* DibWnd.h
 	* HyperLink.cpp
 2. Build the result with buildcpp.ps1, fix errors as needed until success.
+3. Add a new ClearBits.vcprojx to the solution.  It will target the ClearBitsQt .exe, which will be the same as the existing MFC ClearBits.exe except it will be implemented with QtQuick.
+4. Populate the new project with settings and files from "D:\Src\DCSoft\QtQuickStarter\untitled" if easier than creating yourself.  Otherwise, create the starter files yourself.
 
 
 
