@@ -1,11 +1,16 @@
+#include "AppState.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
+    AppState appState;
+    engine.rootContext()->setContextProperty("appState", &appState);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

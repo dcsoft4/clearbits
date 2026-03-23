@@ -62,8 +62,9 @@ Rectangle {
 
             Button {
                 id: playPauseButton
-                text: qsTr("Play")
+                text: appState.playing ? qsTr("Pause") : qsTr("Play")
                 Layout.preferredWidth: 100
+                onClicked: appState.togglePlaying()
             }
 
             Button {
@@ -130,14 +131,11 @@ Rectangle {
             Layout.fillHeight: true
             Layout.topMargin: 8
             clip: true
-
-            model: ListModel {
-                id: playlistModel
-            }
+            model: appState.playlistEntries
 
             delegate: Text {
                 width: playlistView.width
-                text: model.display ?? ""
+                text: modelData ?? ""
                 font.family: Constants.font.family
                 color: palette.windowText
                 padding: 2

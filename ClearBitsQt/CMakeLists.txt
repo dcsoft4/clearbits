@@ -10,6 +10,8 @@ find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2)
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(ClearBitsQt
+    AppState.cpp
+    AppState.h
     main.cpp
 )
 

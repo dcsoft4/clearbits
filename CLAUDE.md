@@ -61,8 +61,8 @@ The goal is to demonstrate that the ClearBits technique can be implemented in a 
 3. Build and run, it should show the same basic buttons, labels, comboboxes, listboxes, etc. as the MFC version
 
 ### Next tasks
-1. Populate the listbox with hard coded .wav and .mp3 files found in "C:\Temp\waves"
-2. 
+1. Populate the listbox with hard coded .wav and .mp3 files found in "C:\Temp\ClearbitsTracks"
+2. Look at MFC\ClearBits.dlg and copy functionality of changing the "Play" button label to "Pause" when it is toggled.
 
 
 
