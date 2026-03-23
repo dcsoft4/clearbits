@@ -1,5 +1,4 @@
 import QtQuick
-import ClearBitsDesign
 
 Window {
     width: 640

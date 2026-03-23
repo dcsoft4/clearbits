@@ -20,23 +20,12 @@ qt_add_qml_module(ClearBitsQt
     QML_FILES
         Main.qml
         Screen01.qml
+        Screen01Form.ui.qml
 )
 
 qt_add_resources(ClearBitsQt "conf"
     PREFIX "/"
     FILES qtquickcontrols2.conf
-)
-
-# ClearBitsDesign support module (Constants singleton etc.)
-qt_add_qml_module(ClearBitsDesign
-    URI ClearBitsDesign
-    VERSION 1.0
-    QML_FILES
-        ClearBitsDesign/Constants.qml
-        ClearBitsDesign/EventListModel.qml
-        ClearBitsDesign/EventListSimulator.qml
-    RESOURCE_PREFIX /qt/qml
-    OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClearBitsDesign"
 )
 
 set_target_properties(ClearBitsQt PROPERTIES
@@ -45,5 +34,4 @@ set_target_properties(ClearBitsQt PROPERTIES
 
 target_link_libraries(ClearBitsQt
     PRIVATE Qt6::Quick Qt6::QuickControls2
-    PRIVATE ClearBitsDesign
 )

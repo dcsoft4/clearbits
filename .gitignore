@@ -7,3 +7,4 @@
 /ClearBitsQt/build/
 /ClearBitsQt/x64/
 *.qtds
+*.qrc
