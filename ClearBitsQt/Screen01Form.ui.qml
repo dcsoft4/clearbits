@@ -144,12 +144,30 @@ Rectangle {
 
             model: ListModel { id: playlistModel }
 
-            delegate: Text {
+            highlight: Rectangle {
+                color: palette.highlight
+                opacity: 0.4
+            }
+            highlightMoveDuration: 0
+
+            delegate: Item {
                 width: playlistView.width
-                text: modelData
-                font.family: Qt.application.font.family
-                color: palette.windowText
-                padding: 2
+                height: delegateText.implicitHeight + 4
+
+                Text {
+                    id: delegateText
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 4
+                    text: modelData
+                    font.family: Qt.application.font.family
+                    color: palette.windowText
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: playlistView.currentIndex = index
+                }
             }
 
             Rectangle {

@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "stdafx.h"
+
 /*------------------------------ ƒNƒ‰ƒX’è‹` -------------------------------*/
 class McWaveReader
 {
@@ -76,4 +78,3 @@ public:
     WAVEFORMATEX* GetWaveFormat( void );
     long GetProgress( void ) { return m_Progress; }
 };
-

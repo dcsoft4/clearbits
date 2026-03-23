@@ -59,11 +59,11 @@ The goal is to demonstrate that the ClearBits technique can be implemented in a 
 1. Build the MFC app with buildcpp.ps1, fix errors as needed until success.
 2. Add a new ClearBits.vcprojx to the solution.  It will target the ClearBitsQt .exe, which will be the same as the existing MFC ClearBits.exe except it will be implemented with QtQuick.
 3. Build and run, it should show the same basic buttons, labels, comboboxes, listboxes, etc. as the MFC version
+4. Populate the listbox with hard coded .wav and .mp3 files found in "C:\Temp\ClearbitsTracks"
+5. Look at MFC\ClearBits.dlg and copy functionality of changing the "Play" button label to "Pause" when it is toggled.
 
 ### Next tasks
-1. Populate the listbox with hard coded .wav and .mp3 files found in "C:\Temp\ClearbitsTracks"
-2. Look at MFC\ClearBits.dlg and copy functionality of changing the "Play" button label to "Pause" when it is toggled.
-
+1. Look at MFC\ClearBits.dlg and copy functionality of initializing audio playback, then starting/pausing/stop playback when the Play button is toggled (the same event that now changes the "Play" button label to "Pause" when it is toggled).  Goal is to get audio playing.  Assume the m_nAlgo remains at FIXED throughout, so you don't have to worry about the playback incorporting m_nAlgo for now.
 
 
 ## Proposed Future Work

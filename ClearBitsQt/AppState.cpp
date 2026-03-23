@@ -1,45 +1,289 @@
 #include "AppState.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QFileInfoList>
+
+#include <cstring>
 
 namespace
 {
 const char kWaveDirectory[] = "C:/Temp/ClearbitsTracks";
 }
 
+// ---------------------------------------------------------------------------
+// Static waveOut callback — called from an audio thread.
+// Posts a WomDoneEvent to AppState so playBuffer() runs on the Qt main thread.
+// ---------------------------------------------------------------------------
+void CALLBACK AppState::waveOutCallback(HWAVEOUT /*hwo*/, UINT uMsg,
+                                        DWORD_PTR dwInstance,
+                                        DWORD_PTR dwParam1,
+                                        DWORD_PTR /*dwParam2*/)
+{
+    if (uMsg == WOM_DONE) {
+        WAVEHDR *hdr = reinterpret_cast<WAVEHDR *>(dwParam1);
+        if (hdr->dwFlags & WHDR_DONE) {
+            auto *sb   = reinterpret_cast<CSampleBuffer *>(hdr->dwUser);
+            auto *self = reinterpret_cast<AppState *>(dwInstance);
+            QCoreApplication::postEvent(self, new WomDoneEvent(sb));
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Constructor / destructor
+// ---------------------------------------------------------------------------
 AppState::AppState(QObject *parent)
     : QObject(parent)
 {
     loadPlaylist();
+
+    m_waveReader.Create();
+
+    // Open audio device and pre-fill buffers with silence (no file open yet).
+    if (openOutDevice(nullptr)) {
+        for (int i = 0; i < NUM_SAMPLE_BUFFERS; ++i) {
+            m_arrSB[i].Alloc(MAX_SOUNDBUF_SIZE);
+            playBuffer(&m_arrSB[i]);
+        }
+    }
 }
 
-QStringList AppState::playlistEntries() const
+AppState::~AppState()
 {
-    return m_playlistEntries;
+    // Stop playback and clean up.
+    m_waveReader.Close();
+
+    if (m_hWaveOut) {
+        waveOutReset(m_hWaveOut);
+
+        for (int i = 0; i < NUM_SAMPLE_BUFFERS; ++i)
+            m_arrSB[i].UnprepareOut(m_hWaveOut);
+
+        waveOutClose(m_hWaveOut);
+        m_hWaveOut = nullptr;
+    }
 }
 
-bool AppState::playing() const
-{
-    return m_playing;
-}
-
-void AppState::togglePlaying()
-{
-    setPlaying(!m_playing);
-}
+// ---------------------------------------------------------------------------
+// Properties
+// ---------------------------------------------------------------------------
+QStringList AppState::playlistEntries() const { return m_playlistEntries; }
+bool        AppState::playing()          const { return m_playing; }
+int         AppState::selectedIndex()    const { return m_selectedIndex; }
 
 void AppState::setPlaying(bool playing)
 {
-    if (m_playing == playing) {
+    if (m_playing == playing)
         return;
-    }
-
     m_playing = playing;
     emit playingChanged();
 }
 
+void AppState::setSelectedIndex(int index)
+{
+    if (m_selectedIndex == index)
+        return;
+    m_selectedIndex = index;
+    emit selectedIndexChanged();
+}
+
+// ---------------------------------------------------------------------------
+// togglePlaying — called from QML Play/Pause button
+// ---------------------------------------------------------------------------
+void AppState::togglePlaying()
+{
+    if (m_waveReader.IsOpen())
+        pause();
+    else
+        play();
+}
+
+// ---------------------------------------------------------------------------
+// event — handle WomDoneEvent on the main thread
+// ---------------------------------------------------------------------------
+bool AppState::event(QEvent *e)
+{
+    if (e->type() == WomDoneEvent::Type) {
+        playBuffer(static_cast<WomDoneEvent *>(e)->sampleBuffer());
+        return true;
+    }
+    return QObject::event(e);
+}
+
+// ---------------------------------------------------------------------------
+// Audio device
+// ---------------------------------------------------------------------------
+bool AppState::openOutDevice(WAVEFORMATEX *pwfx)
+{
+    WAVEFORMATEX wfStandard = {};
+    if (!pwfx) {
+        wfStandard.wFormatTag      = WAVE_FORMAT_PCM;
+        wfStandard.nChannels       = 2;
+        wfStandard.wBitsPerSample  = 16;
+        wfStandard.nSamplesPerSec  = 44100;
+        wfStandard.nBlockAlign     = (wfStandard.wBitsPerSample / 8) * wfStandard.nChannels;
+        wfStandard.nAvgBytesPerSec = wfStandard.nSamplesPerSec * wfStandard.nBlockAlign;
+        wfStandard.cbSize          = 0;
+        pwfx = &wfStandard;
+    }
+
+    if (m_hWaveOut) {
+        // Already open — skip if format hasn't changed.
+        if (memcmp(pwfx, &m_wfx, sizeof(WAVEFORMATEX)) == 0)
+            return true;
+        closeOutDevice();
+    }
+
+    MMRESULT result = waveOutOpen(&m_hWaveOut, WAVE_MAPPER, pwfx,
+                                  reinterpret_cast<DWORD_PTR>(&AppState::waveOutCallback),
+                                  reinterpret_cast<DWORD_PTR>(this),
+                                  CALLBACK_FUNCTION);
+    if (result != MMSYSERR_NOERROR) {
+        m_hWaveOut = nullptr;
+        return false;
+    }
+
+    m_wfx = *pwfx;
+    return true;
+}
+
+void AppState::closeOutDevice()
+{
+    if (!m_hWaveOut)
+        return;
+
+    waveOutReset(m_hWaveOut);
+
+    for (int i = 0; i < NUM_SAMPLE_BUFFERS; ++i)
+        m_arrSB[i].UnprepareOut(m_hWaveOut);
+
+    waveOutClose(m_hWaveOut);
+    m_hWaveOut = nullptr;
+}
+
+// ---------------------------------------------------------------------------
+// playBuffer — fills one buffer from the open file (or silence) and submits it
+// ---------------------------------------------------------------------------
+void AppState::playBuffer(CSampleBuffer *pSB)
+{
+    if (!m_hWaveOut)
+        return;
+
+    LONG lBufSize = getNextBufSize_Fixed();
+
+    pSB->UnprepareOut(m_hWaveOut);
+    pSB->PrepareOut(m_hWaveOut, lBufSize);
+
+    LONG lBytesFilled = 0;
+
+    if (m_waveReader.IsOpen()) {
+        DWORD dwWritten = 0;
+        if (m_waveReader.Read(static_cast<DWORD>(lBufSize),
+                              reinterpret_cast<BYTE *>(pSB->m_pData),
+                              &dwWritten)) {
+            lBytesFilled = static_cast<LONG>(dwWritten);
+
+            if (lBytesFilled < lBufSize) {
+                // Reached end of file — close it; silence fills the remainder.
+                m_waveReader.Close();
+                setPlaying(false);
+            }
+        }
+    }
+
+    // Zero-fill any unfilled portion.
+    if (lBytesFilled < lBufSize)
+        ZeroMemory(pSB->m_pData + lBytesFilled, lBufSize - lBytesFilled);
+
+    MMRESULT result = waveOutWrite(m_hWaveOut, pSB->m_pWaveHdr, sizeof(WAVEHDR));
+    Q_UNUSED(result);
+}
+
+LONG AppState::getNextBufSize_Fixed()
+{
+    // 2-second fixed buffer
+    WORD wSample  = 0x8000;
+    LONG lBufSize = (m_wfx.nAvgBytesPerSec * 2) + (wSample * m_wfx.nBlockAlign);
+    return lBufSize;
+}
+
+// ---------------------------------------------------------------------------
+// Play / Pause / Stop
+// ---------------------------------------------------------------------------
+bool AppState::play()
+{
+    if (m_waveReader.IsOpen())
+        return true;   // Already playing.
+
+    if (m_playlistEntries.isEmpty())
+        return false;
+
+    int idx = (m_selectedIndex >= 0 && m_selectedIndex < m_playlistEntries.size())
+              ? m_selectedIndex : 0;
+
+    QString filename = QString::fromLatin1(kWaveDirectory) + "/" + m_playlistEntries[idx];
+
+    // Resume from paused position if applicable.
+    bool hasPauseInfo = (!m_pauseFile.isEmpty() && m_pauseFile == m_playlistEntries[idx]);
+
+    QByteArray filenameBytes = filename.toLocal8Bit();
+    if (!m_waveReader.Open(filenameBytes.data()))
+        return false;
+
+    if (hasPauseInfo)
+        m_waveReader.Seek(m_pausePos);
+
+    // Bug fix: treat device-open failure as a hard error.
+    if (!openOutDevice(m_waveReader.GetWaveFormat())) {
+        m_waveReader.Close();
+        return false;
+    }
+
+    waveOutReset(m_hWaveOut);
+
+    setPlaying(true);
+    return true;
+}
+
+void AppState::pause()
+{
+    // Bug fix: save to locals before stop() clears the members.
+    // Bug fix: use GetFileName() (actual open file) not selectedIndex
+    //   (UI selection), which could differ if user clicked another item.
+    QString savedFile;
+    long    savedPos = 0;
+    if (m_waveReader.IsOpen()) {
+        // GetFileName() returns the full path; store only the basename so it
+        // matches the bare filenames in m_playlistEntries used by play().
+        savedFile = QFileInfo(QString::fromWCharArray(m_waveReader.GetFileName())).fileName();
+        savedPos  = m_waveReader.GetProgress();
+    }
+
+    stop();   // closes reader, clears m_pauseFile/m_pausePos, sets playing=false
+
+    // Restore pause state that stop() cleared.
+    m_pauseFile = savedFile;
+    m_pausePos  = savedPos;
+}
+
+void AppState::stop()
+{
+    m_waveReader.Close();
+
+    if (m_hWaveOut)
+        waveOutReset(m_hWaveOut);   // Returns all buffers; callback fills with silence.
+
+    m_pauseFile.clear();
+    m_pausePos = 0;
+
+    setPlaying(false);
+}
+
+// ---------------------------------------------------------------------------
+// Playlist
+// ---------------------------------------------------------------------------
 void AppState::loadPlaylist()
 {
     QDir waveDirectory(QString::fromLatin1(kWaveDirectory));
@@ -51,13 +295,11 @@ void AppState::loadPlaylist()
     QStringList playlistEntries;
     playlistEntries.reserve(entries.size());
 
-    for (const QFileInfo &entry : entries) {
+    for (const QFileInfo &entry : entries)
         playlistEntries.append(entry.fileName());
-    }
 
-    if (m_playlistEntries == playlistEntries) {
+    if (m_playlistEntries == playlistEntries)
         return;
-    }
 
     m_playlistEntries = playlistEntries;
     emit playlistEntriesChanged();

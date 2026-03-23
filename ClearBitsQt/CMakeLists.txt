@@ -13,6 +13,9 @@ qt_add_executable(ClearBitsQt
     AppState.cpp
     AppState.h
     main.cpp
+    ../SAMPBUF.CPP
+    ../MP3/MCWaveReader.cpp
+    ../MP3/id3_int28.cpp
 )
 
 qt_add_qml_module(ClearBitsQt
@@ -32,6 +35,22 @@ set_target_properties(ClearBitsQt PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+target_include_directories(ClearBitsQt PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${CMAKE_CURRENT_SOURCE_DIR}/../MP3
+)
+
+target_compile_definitions(ClearBitsQt PRIVATE
+    CLEARBITS_QT
+)
+
+if (MSVC)
+    # Legacy shared sources contain non-ASCII comments that trigger C4828 under /utf-8.
+    target_compile_options(ClearBitsQt PRIVATE /wd4828)
+endif()
+
 target_link_libraries(ClearBitsQt
     PRIVATE Qt6::Quick Qt6::QuickControls2
+    winmm Msacm32 vfw32
 )

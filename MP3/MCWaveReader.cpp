@@ -103,7 +103,7 @@ bool McWaveReader::Open( char* pFilename )
 	m_strFileName.Empty();
 
     // Ç‹Ç∏ÇÕ MMIO ÉIÅ[ÉvÉì
-    m_MmioHn = ::mmioOpen( pFilename, NULL, MMIO_ALLOCBUF | MMIO_READ );
+    m_MmioHn = ::mmioOpenA( pFilename, NULL, MMIO_ALLOCBUF | MMIO_READ );
     if( m_MmioHn == NULL ) return false;
 
 	// DC determine file length, rewind
@@ -680,5 +680,4 @@ bool McWaveReader::Seek (LONG lTo)
 
 	return true;
 }
-
 
