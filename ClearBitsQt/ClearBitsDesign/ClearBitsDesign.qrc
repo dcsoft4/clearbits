@@ -1,0 +1,7 @@
+<RCC>
+    <qresource>
+        <file>ClearBitsDesign.qmlproject</file>
+        <file>qmldir</file>
+        <file>qtquickcontrols2.conf</file>
+    </qresource>
+</RCC>

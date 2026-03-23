@@ -1,0 +1,40 @@
+import QmlProject
+
+Project {
+    mainFile: "Main.qml"
+
+    QmlFiles {
+        directory: "."
+    }
+
+    QmlFiles {
+        directory: "ClearBitsDesign"
+    }
+
+    Files {
+        filter: "*.conf"
+        files: ["qtquickcontrols2.conf"]
+    }
+
+    Files {
+        filter: "qmldir"
+        directory: "."
+    }
+
+    Environment {
+        QT_QUICK_CONTROLS_CONF: "qtquickcontrols2.conf"
+        QML_COMPAT_RESOLVE_URLS_ON_ASSIGNMENT: "1"
+        QT_LOGGING_RULES: "qt.qml.connections=false"
+        QT_ENABLE_HIGHDPI_SCALING: "0"
+    }
+
+    qt6Project: true
+
+    importPaths: [ "." ]
+
+    qdsVersion: "4.8"
+
+    quickVersion: "6.8"
+
+    widgetApp: false
+}
