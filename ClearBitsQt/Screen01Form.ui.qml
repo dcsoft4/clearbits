@@ -1,3 +1,4 @@
+
 /*
 This is a UI file (.ui.qml) that is intended to be edited in Qt Design Studio only.
 It is supposed to be strictly declarative and only uses a subset of QML. If you edit
@@ -19,9 +20,6 @@ Rectangle {
     property alias nextButton: nextButton
     property alias algoCombo: algoCombo
     property alias seekBackFastButton: seekBackFastButton
-    property alias seekBackSlowButton: seekBackSlowButton
-    property alias seekFwdSlowButton: seekFwdSlowButton
-    property alias seekFwdFastButton: seekFwdFastButton
     property alias progressText: progressText
     property alias formatText: formatText
     property alias shuffleCheck: shuffleCheck
@@ -30,6 +28,9 @@ Rectangle {
     property alias clearLinkArea: clearLinkArea
 
     color: palette.window
+    property alias seekForwardLargeButton: seekForwardLargeButton
+    property alias seekForwardButton: seekForwardButton
+    property alias seekBackButton: seekBackButton
 
     ColumnLayout {
         id: columnLayout
@@ -72,7 +73,9 @@ Rectangle {
                 Layout.preferredWidth: 170
             }
 
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
 
             Button {
                 id: prevButton
@@ -98,18 +101,22 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 6
 
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
 
             Button {
                 id: seekBackFastButton
                 text: qsTr("<<")
                 Layout.preferredWidth: 40
+                ToolTip { text: qsTr("[F5] Seek back 1 minute"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
-                id: seekBackSlowButton
+                id: seekBackButton
                 text: qsTr("<")
                 Layout.preferredWidth: 40
+                ToolTip { text: qsTr("[F6] Seek back 10 seconds"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Text {
@@ -122,15 +129,17 @@ Rectangle {
             }
 
             Button {
-                id: seekFwdSlowButton
+                id: seekForwardButton
                 text: qsTr(">")
                 Layout.preferredWidth: 40
+                ToolTip { text: qsTr("[F7] Seek forward 10 seconds"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
-                id: seekFwdFastButton
+                id: seekForwardLargeButton
                 text: qsTr(">>")
                 Layout.preferredWidth: 40
+                ToolTip { text: qsTr("[F8] Seek forward 1 minute"); visible: parent.hovered; y: parent.height + 4 }
             }
         }
 
@@ -142,7 +151,9 @@ Rectangle {
             Layout.topMargin: 8
             clip: true
 
-            model: ListModel { id: playlistModel }
+            model: ListModel {
+                id: playlistModel
+            }
 
             highlight: Rectangle {
                 color: palette.highlight
@@ -213,7 +224,10 @@ Rectangle {
                 font.family: Qt.application.font.family
                 color: palette.link
                 visible: false
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                }
             }
 
             Text {
@@ -222,10 +236,15 @@ Rectangle {
                 font.family: Qt.application.font.family
                 color: palette.link
                 visible: false
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                }
             }
 
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
 
             CheckBox {
                 id: shuffleCheck

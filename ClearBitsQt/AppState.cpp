@@ -12,7 +12,7 @@
 namespace
 {
 const char kWaveDirectory[] = "C:/Temp/ClearbitsTracks";
-constexpr long kAlgoChangeRewindSeconds = 3;
+constexpr long kAlgoChangeRewindSeconds = 2;
 }
 
 // ---------------------------------------------------------------------------
@@ -146,6 +146,40 @@ void AppState::togglePlaying()
         pause();
     else
         play();
+}
+
+void AppState::seekRelativeSeconds(int seconds)
+{
+    if (m_wfx.nAvgBytesPerSec == 0)
+        return;
+
+    const qint64 deltaBytes = static_cast<qint64>(m_wfx.nAvgBytesPerSec) * seconds;
+
+    if (m_waveReader.IsOpen()) {
+        qint64 newPosition = static_cast<qint64>(playbackPositionBytes()) + deltaBytes;
+        if (newPosition < 0)
+            newPosition = 0;
+
+        if (!m_waveReader.Seek(static_cast<LONG>(newPosition)))
+            return;
+
+        if (m_hWaveOut) {
+            waveOutReset(m_hWaveOut);
+            m_playbackPositionBytes = static_cast<long>(newPosition);
+            setProgressTextForBytes(m_playbackPositionBytes);
+        }
+        return;
+    }
+
+    if (!m_pauseFile.isEmpty()) {
+        qint64 newPosition = static_cast<qint64>(m_pausePos) + deltaBytes;
+        if (newPosition < 0)
+            newPosition = 0;
+
+        m_pausePos = static_cast<long>(newPosition);
+        m_playbackPositionBytes = m_pausePos;
+        setProgressTextForBytes(m_pausePos);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -317,12 +351,8 @@ long AppState::playbackPositionBytes() const
     return m_playbackPositionBytes + static_cast<long>(mmTime.u.cb);
 }
 
-void AppState::updateProgressText()
+void AppState::setProgressTextForBytes(long bytes)
 {
-    if (!m_playing || m_wfx.nAvgBytesPerSec == 0)
-        return;
-
-    long bytes = playbackPositionBytes();
     int totalSecs = static_cast<int>(bytes / m_wfx.nAvgBytesPerSec);
     int mins = totalSecs / 60;
     int secs = totalSecs % 60;
@@ -334,6 +364,14 @@ void AppState::updateProgressText()
         m_progressText = text;
         emit progressTextChanged();
     }
+}
+
+void AppState::updateProgressText()
+{
+    if (!m_playing || m_wfx.nAvgBytesPerSec == 0)
+        return;
+
+    setProgressTextForBytes(playbackPositionBytes());
 }
 
 // ---------------------------------------------------------------------------

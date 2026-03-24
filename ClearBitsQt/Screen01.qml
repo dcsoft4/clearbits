@@ -4,8 +4,17 @@ import QtQuick.Controls
 Screen01Form {
     id: form
 
+    function seekBackLarge() { appState.seekRelativeSeconds(-60) }
+    function seekBackSmall() { appState.seekRelativeSeconds(-10) }
+    function seekForwardSmall() { appState.seekRelativeSeconds(10) }
+    function seekForwardLarge() { appState.seekRelativeSeconds(60) }
+
     playPauseButton.text: appState.playing ? qsTr("Pause") : qsTr("Play")
     playPauseButton.onClicked: appState.togglePlaying()
+    seekBackFastButton.onClicked: seekBackLarge()
+    seekBackButton.onClicked: seekBackSmall()
+    seekForwardButton.onClicked: seekForwardSmall()
+    seekForwardLargeButton.onClicked: seekForwardLarge()
     playlistView.model: appState.playlistEntries
     algoCombo.currentIndex: appState.algo
     progressText.text: appState.progressText
@@ -32,6 +41,26 @@ Screen01Form {
     Shortcut {
         sequence: "F4"
         onActivated: appState.algo = 3
+    }
+
+    Shortcut {
+        sequence: "F5"
+        onActivated: seekBackLarge()
+    }
+
+    Shortcut {
+        sequence: "F6"
+        onActivated: seekBackSmall()
+    }
+
+    Shortcut {
+        sequence: "F7"
+        onActivated: seekForwardSmall()
+    }
+
+    Shortcut {
+        sequence: "F8"
+        onActivated: seekForwardLarge()
     }
 
     // Sync C++ → view: use Connections (not a declarative binding) so that

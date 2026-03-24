@@ -47,6 +47,7 @@ public:
     QString progressText() const;
 
     Q_INVOKABLE void togglePlaying();
+    Q_INVOKABLE void seekRelativeSeconds(int seconds);
 
 public slots:
     void setPlaying(bool playing);
@@ -77,6 +78,7 @@ private:
     LONG getNextBufSize_CAPI();
     LONG getNextBufSize_RandomOrg();
     long playbackPositionBytes() const;
+    void setProgressTextForBytes(long bytes);
     void updateProgressText();
 
     static void CALLBACK waveOutCallback(HWAVEOUT hwo, UINT uMsg,
