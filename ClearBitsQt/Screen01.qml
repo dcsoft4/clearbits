@@ -8,6 +8,7 @@ Screen01Form {
     playPauseButton.onClicked: appState.togglePlaying()
     playlistView.model: appState.playlistEntries
     algoCombo.currentIndex: appState.algo
+    progressText.text: appState.progressText
 
     // Sync view → C++: delegate clicks set currentIndex imperatively; forward to appState.
     playlistView.onCurrentIndexChanged: appState.selectedIndex = form.playlistView.currentIndex

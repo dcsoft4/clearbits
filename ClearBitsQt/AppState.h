@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QEvent>
+#include <QTimer>
 
 #include "StdAfx.h"
 
@@ -33,6 +34,7 @@ class AppState : public QObject
     Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
     Q_PROPERTY(int algo READ algo WRITE setAlgo NOTIFY algoChanged)
+    Q_PROPERTY(QString progressText READ progressText NOTIFY progressTextChanged)
 
 public:
     explicit AppState(QObject *parent = nullptr);
@@ -42,6 +44,7 @@ public:
     bool playing() const;
     int selectedIndex() const;
     int algo() const;
+    QString progressText() const;
 
     Q_INVOKABLE void togglePlaying();
 
@@ -55,6 +58,7 @@ signals:
     void playingChanged();
     void selectedIndexChanged();
     void algoChanged();
+    void progressTextChanged();
 
 protected:
     bool event(QEvent *e) override;
@@ -72,6 +76,8 @@ private:
     LONG getNextBufSize_VC();
     LONG getNextBufSize_CAPI();
     LONG getNextBufSize_RandomOrg();
+    long playbackPositionBytes() const;
+    void updateProgressText();
 
     static void CALLBACK waveOutCallback(HWAVEOUT hwo, UINT uMsg,
                                          DWORD_PTR dwInstance,
@@ -89,9 +95,12 @@ private:
     HCRYPTPROV m_hProvider = 0;
 
     McWaveReader m_waveReader;
+    QTimer m_progressTimer;
 
     QString m_pauseFile;
     long    m_pausePos = 0;
     QByteArray m_randomOrgData;
     int m_randomOrgPos = 0;
+    QString m_progressText = QStringLiteral("0:00");
+    long m_playbackPositionBytes = 0;
 };

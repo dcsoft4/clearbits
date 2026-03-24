@@ -69,7 +69,7 @@ Rectangle {
             ComboBox {
                 id: algoCombo
                 model: ["[F1] Fixed", "[F2] rand()", "[F3]CAPI", "[F4] Random.org"]
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 170
             }
 
             Item { Layout.fillWidth: true }

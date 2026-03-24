@@ -40,6 +40,8 @@ AppState::AppState(QObject *parent)
     : QObject(parent)
 {
     loadPlaylist();
+    m_progressTimer.setInterval(500);
+    connect(&m_progressTimer, &QTimer::timeout, this, &AppState::updateProgressText);
 
     m_waveReader.Create();
     CryptAcquireContext(&m_hProvider, nullptr, nullptr, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);
@@ -85,6 +87,7 @@ QStringList AppState::playlistEntries() const { return m_playlistEntries; }
 bool        AppState::playing()          const { return m_playing; }
 int         AppState::selectedIndex()    const { return m_selectedIndex; }
 int         AppState::algo()             const { return m_nAlgo; }
+QString     AppState::progressText()     const { return m_progressText; }
 
 void AppState::setPlaying(bool playing)
 {
@@ -92,6 +95,13 @@ void AppState::setPlaying(bool playing)
         return;
     m_playing = playing;
     emit playingChanged();
+
+    if (playing) {
+        m_progressTimer.start();
+        updateProgressText();
+    } else {
+        m_progressTimer.stop();
+    }
 }
 
 void AppState::setSelectedIndex(int index)
@@ -106,11 +116,16 @@ void AppState::setAlgo(int algo)
 {
     if (m_nAlgo == algo)
         return;
-    m_nAlgo = algo;
 
-    if (m_hWaveOut)
+    if (m_hWaveOut) {
+        if (m_playing) {
+            m_playbackPositionBytes = playbackPositionBytes();
+        }
+
         waveOutReset(m_hWaveOut);   // Match MFC: refill buffers immediately using the new algorithm.
+    }
 
+    m_nAlgo = algo;
     emit algoChanged();
 }
 
@@ -278,6 +293,41 @@ LONG AppState::getNextBufSize_RandomOrg()
     return (m_wfx.nAvgBytesPerSec * 2) + (wSample * m_wfx.nBlockAlign);
 }
 
+long AppState::playbackPositionBytes() const
+{
+    if (!m_hWaveOut)
+        return m_playbackPositionBytes;
+
+    MMTIME mmTime = {};
+    mmTime.wType = TIME_BYTES;
+    if (waveOutGetPosition(m_hWaveOut, &mmTime, sizeof(mmTime)) != MMSYSERR_NOERROR)
+        return m_playbackPositionBytes;
+
+    if (mmTime.wType != TIME_BYTES)
+        return m_playbackPositionBytes;
+
+    return m_playbackPositionBytes + static_cast<long>(mmTime.u.cb);
+}
+
+void AppState::updateProgressText()
+{
+    if (!m_playing || m_wfx.nAvgBytesPerSec == 0)
+        return;
+
+    long bytes = playbackPositionBytes();
+    int totalSecs = static_cast<int>(bytes / m_wfx.nAvgBytesPerSec);
+    int mins = totalSecs / 60;
+    int secs = totalSecs % 60;
+
+    QString text = QString::number(mins) + ":"
+        + QString::number(secs).rightJustified(2, QLatin1Char('0'));
+
+    if (m_progressText != text) {
+        m_progressText = text;
+        emit progressTextChanged();
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Play / Pause / Stop
 // ---------------------------------------------------------------------------
@@ -301,8 +351,12 @@ bool AppState::play()
     if (!m_waveReader.Open(filenameBytes.data()))
         return false;
 
-    if (hasPauseInfo)
+    if (hasPauseInfo) {
         m_waveReader.Seek(m_pausePos);
+        m_playbackPositionBytes = m_pausePos;
+    } else {
+        m_playbackPositionBytes = 0;
+    }
 
     // Bug fix: treat device-open failure as a hard error.
     if (!openOutDevice(m_waveReader.GetWaveFormat())) {
@@ -322,12 +376,12 @@ void AppState::pause()
     // Bug fix: use GetFileName() (actual open file) not selectedIndex
     //   (UI selection), which could differ if user clicked another item.
     QString savedFile;
-    long    savedPos = 0;
+    long    savedPos = playbackPositionBytes();
+    QString savedProgressText = m_progressText;
     if (m_waveReader.IsOpen()) {
         // GetFileName() returns the full path; store only the basename so it
         // matches the bare filenames in m_playlistEntries used by play().
         savedFile = QFileInfo(QString::fromWCharArray(m_waveReader.GetFileName())).fileName();
-        savedPos  = m_waveReader.GetProgress();
     }
 
     stop();   // closes reader, clears m_pauseFile/m_pausePos, sets playing=false
@@ -335,6 +389,10 @@ void AppState::pause()
     // Restore pause state that stop() cleared.
     m_pauseFile = savedFile;
     m_pausePos  = savedPos;
+    if (m_progressText != savedProgressText) {
+        m_progressText = savedProgressText;
+        emit progressTextChanged();
+    }
 }
 
 void AppState::stop()
@@ -346,6 +404,12 @@ void AppState::stop()
 
     m_pauseFile.clear();
     m_pausePos = 0;
+    m_playbackPositionBytes = 0;
+
+    if (m_progressText != QStringLiteral("0:00")) {
+        m_progressText = QStringLiteral("0:00");
+        emit progressTextChanged();
+    }
 
     setPlaying(false);
 }
