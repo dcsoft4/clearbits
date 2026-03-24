@@ -292,9 +292,13 @@ void AppState::playBuffer(CSampleBuffer *pSB)
             lBytesFilled = static_cast<LONG>(dwWritten);
 
             if (lBytesFilled < lBufSize) {
-                // Reached end of file — close it; silence fills the remainder.
-                m_waveReader.Close();
-                setPlaying(false);
+                const bool reachedEnd = m_waveReader.IsPcm() || m_waveReader.FoundEnd();
+                if (reachedEnd) {
+                    // PCM short reads mean EOF. For MP3, only stop once the decoder has
+                    // actually reported end-of-file; short fills after a seek can be transient.
+                    m_waveReader.Close();
+                    setPlaying(false);
+                }
             }
         }
     }

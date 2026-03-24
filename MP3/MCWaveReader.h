@@ -77,4 +77,6 @@ public:
 
     WAVEFORMATEX* GetWaveFormat( void );
     long GetProgress( void ) { return m_Progress; }
+	bool IsPcm( void ) { return m_FormatType == 'P'; }
+	bool FoundEnd( void ) { return m_bFoundEnd; }
 };

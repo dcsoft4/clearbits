@@ -656,28 +656,71 @@ DWORD McWaveReader::Decode( void )
 
 bool McWaveReader::Seek (LONG lTo)
 {
-	if ( !IsOpen() || m_FormatType != 'P' )	// no file or not PCM file
+	if ( !IsOpen() )
 		return false;
 
-
-	LONG lCur = ::mmioSeek (m_MmioHn, 0, SEEK_CUR );
 	if (lTo < 0)
 		lTo = 0;
-	else if (m_DataOffset + lTo > m_lEnd)
-		lTo = m_lEnd;
 
-
-	// copied from Reset()
-	if ( ::mmioSeek( m_MmioHn, m_DataOffset + lTo, SEEK_SET ) == -1 ) 
+	if (m_FormatType == 'P')
 	{
-		ASSERT (FALSE);
-		return false;
+		LONG clampedTo = lTo;
+		if (m_DataOffset + clampedTo > m_lEnd)
+			clampedTo = m_lEnd - m_DataOffset;
+
+		if ( ::mmioSeek( m_MmioHn, m_DataOffset + clampedTo, SEEK_SET ) == -1 )
+			return false;
+
+		m_Progress = clampedTo;
+		m_DecRemainderSize = 0;
+		m_bFoundEnd = false;
+		return true;
 	}
 
-	m_Progress = lTo;
-    m_DecRemainderSize = 0;
-    m_bFoundEnd = false;
+	LONG mp3Offset = 0;
+	if (m_oBuffFormat->nAvgBytesPerSec > 0 && m_oMp3WaveFormat->wfx.nAvgBytesPerSec > 0)
+	{
+		double secs = static_cast<double>(lTo) / m_oBuffFormat->nAvgBytesPerSec;
+		mp3Offset = static_cast<LONG>(secs * m_oMp3WaveFormat->wfx.nAvgBytesPerSec);
+	}
 
+	LONG fileTarget = m_DataOffset + mp3Offset;
+	if (fileTarget > m_lEnd)
+		fileTarget = m_lEnd;
+
+	if ( ::mmioSeek( m_MmioHn, fileTarget, SEEK_SET ) == -1 )
+		return false;
+
+	CloseAcmStream();
+
+	if ( !ReadMp3FrameHeader() ) return false;
+
+	if ( ::acmStreamOpen( &m_AcmHn, NULL,
+						(WAVEFORMATEX*)m_oMp3WaveFormat, m_oBuffFormat,
+						NULL, 0, 0, 0 ) != 0 )
+		return false;
+
+	m_aFileBuffer = new BYTE[ m_FileBuffSize ];
+	if ( m_aFileBuffer == NULL ) { CloseAcmStream(); return false; }
+
+	if ( ::acmStreamSize( m_AcmHn, m_FileBuffSize, &m_DecBuffSize, ACM_STREAMSIZEF_SOURCE ) != 0 )
+		{ CloseAcmStream(); return false; }
+
+	m_aDecBuffer = new BYTE[ m_DecBuffSize ];
+	if ( m_aDecBuffer == NULL ) { CloseAcmStream(); return false; }
+
+	m_oAsh = new ACMSTREAMHEADER;
+	memset( m_oAsh, 0, sizeof(ACMSTREAMHEADER) );
+	m_oAsh->cbStruct = sizeof(ACMSTREAMHEADER);
+	m_oAsh->pbSrc = m_aFileBuffer;
+	m_oAsh->cbSrcLength = m_FileBuffSize;
+	m_oAsh->pbDst = m_aDecBuffer;
+	m_oAsh->cbDstLength = m_DecBuffSize;
+	if ( ::acmStreamPrepareHeader( m_AcmHn, m_oAsh, 0 ) != 0 )
+		{ CloseAcmStream(); return false; }
+
+	m_Progress = lTo;
+	m_DecRemainderSize = 0;
+	m_bFoundEnd = false;
 	return true;
 }
-
