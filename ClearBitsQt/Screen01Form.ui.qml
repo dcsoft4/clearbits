@@ -19,7 +19,6 @@ Rectangle {
     property alias prevButton: prevButton
     property alias nextButton: nextButton
     property alias algoCombo: algoCombo
-    property alias seekBackFastButton: seekBackFastButton
     property alias progressText: progressText
     property alias formatText: formatText
     property alias shuffleCheck: shuffleCheck
@@ -28,9 +27,10 @@ Rectangle {
     property alias clearLinkArea: clearLinkArea
 
     color: palette.window
-    property alias seekForwardLargeButton: seekForwardLargeButton
-    property alias seekForwardButton: seekForwardButton
+    property alias seekBack2Button: seekBack2Button
     property alias seekBackButton: seekBackButton
+    property alias seekForwardButton: seekForwardButton
+    property alias seekForward2Button: seekForward2Button
 
     ColumnLayout {
         id: columnLayout
@@ -73,7 +73,7 @@ Rectangle {
                 id: algoCombo
                 model: ["[F1] Fixed", "[F2] rand()", "[F3]CAPI", "[F4] Random.org"]
                 ToolTip.text: [
-                    qsTr("Buffers are fixed size containing 2 seconds of audio, the standardmethod used by audio players"),
+                    qsTr("Buffers are fixed size containing 2 seconds of audio, the standard method used by audio players"),
                     qsTr("Buffer sizes are determined by the VC rand() algorithm, notorious for poor randomness"),
                     qsTr("Buffer sizes are determined by the CryptGenRandom() algorithm, known for good randomness"),
                     qsTr("Buffer sizes are determined by real-world occurring random numbers from random.org")
@@ -118,16 +118,16 @@ Rectangle {
             }
 
             Button {
-                id: seekBackFastButton
+                id: seekBack2Button
                 text: qsTr("<<")
-                Layout.preferredWidth: 40
+                Layout.preferredWidth: 50
                 ToolTip { text: qsTr("[F5] Seek back 1 minute"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
                 id: seekBackButton
                 text: qsTr("<")
-                Layout.preferredWidth: 40
+                Layout.preferredWidth: 50
                 ToolTip { text: qsTr("[F6] Seek back 10 seconds"); visible: parent.hovered; y: parent.height + 4 }
             }
 
@@ -148,14 +148,14 @@ Rectangle {
             Button {
                 id: seekForwardButton
                 text: qsTr(">")
-                Layout.preferredWidth: 40
+                Layout.preferredWidth: 50
                 ToolTip { text: qsTr("[F7] Seek forward 10 seconds"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
-                id: seekForwardLargeButton
+                id: seekForward2Button
                 text: qsTr(">>")
-                Layout.preferredWidth: 40
+                Layout.preferredWidth: 50
                 ToolTip { text: qsTr("[F8] Seek forward 1 minute"); visible: parent.hovered; y: parent.height + 4 }
             }
         }
@@ -167,10 +167,21 @@ Rectangle {
             Layout.fillHeight: true
             Layout.topMargin: 8
             clip: true
+            HoverHandler {
+                id: playlistHover
+            }
 
             model: ListModel {
                 id: playlistModel
             }
+
+            ToolTip {
+                text: qsTr("Click the Load link below to load audio tracks or playlists")
+                visible: playlistHover.hovered && playlistView.count === 0
+                x: playlistHover.point.position.x
+                y: playlistHover.point.position.y + 4
+            }
+
 
             highlight: Rectangle {
                 color: palette.highlight

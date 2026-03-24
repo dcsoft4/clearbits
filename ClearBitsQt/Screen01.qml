@@ -4,19 +4,19 @@ import QtQuick.Controls
 Screen01Form {
     id: form
 
-    function seekBackLarge() { appState.seekRelativeSeconds(-60) }
-    function seekBackSmall() { appState.seekRelativeSeconds(-10) }
-    function seekForwardSmall() { appState.seekRelativeSeconds(10) }
-    function seekForwardLarge() { appState.seekRelativeSeconds(60) }
+    function seekBack2() { appState.seekRelativeSeconds(-60) }
+    function seekBack() { appState.seekRelativeSeconds(-10) }
+    function seekForward() { appState.seekRelativeSeconds(10) }
+    function seekForward2() { appState.seekRelativeSeconds(60) }
 
     playPauseButton.text: appState.playing ? qsTr("Pause") : qsTr("Play")
     playPauseButton.onClicked: appState.togglePlaying()
     prevButton.onClicked: appState.prevTrack()
     nextButton.onClicked: appState.nextTrack()
-    seekBackFastButton.onClicked: seekBackLarge()
-    seekBackButton.onClicked: seekBackSmall()
-    seekForwardButton.onClicked: seekForwardSmall()
-    seekForwardLargeButton.onClicked: seekForwardLarge()
+    seekBack2Button.onClicked: seekBack2()
+    seekBackButton.onClicked: seekBack()
+    seekForwardButton.onClicked: seekForward()
+    seekForward2Button.onClicked: seekForward2()
     loadLinkArea.onClicked: appState.loadPlaylist()
     clearLinkArea.onClicked: appState.clearPlaylist()
     playlistView.model: appState.playlistEntries
@@ -49,22 +49,22 @@ Screen01Form {
 
     Shortcut {
         sequence: "F5"
-        onActivated: seekBackLarge()
+        onActivated: seekBack2()
     }
 
     Shortcut {
         sequence: "F6"
-        onActivated: seekBackSmall()
+        onActivated: seekBack()
     }
 
     Shortcut {
         sequence: "F7"
-        onActivated: seekForwardSmall()
+        onActivated: seekForward()
     }
 
     Shortcut {
         sequence: "F8"
-        onActivated: seekForwardLarge()
+        onActivated: seekForward2()
     }
 
     Shortcut {
