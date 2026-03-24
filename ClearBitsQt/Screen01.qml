@@ -77,6 +77,11 @@ Screen01Form {
         onActivated: appState.nextTrack()
     }
 
+    Shortcut {
+        sequence: "Space"
+        onActivated: appState.togglePlaying()
+    }
+
     // Sync C++ → view: use Connections (not a declarative binding) so that
     // imperative assignments from the delegate don't break the update path.
     Connections {
