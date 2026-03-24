@@ -4,22 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ClearBits Music Player is a C++/MFC Windows desktop application that demonstrates the "ClearBits" audio enhancement technique — using randomly sized audio buffers to improve perceptual sound quality. Users can play WAVE/MP3 files and switch buffer-sizing algorithms on-the-fly for comparison.
+ClearBits Music Player is a Windows desktop application that demonstrates the "ClearBits" audio enhancement technique — using randomly sized audio buffers to improve perceptual sound quality. Users can play WAVE/MP3 files and switch buffer-sizing algorithms on-the-fly for comparison.
+
+The MFC version is the original.  It produces ClearBits.exe.
+
+The Qt/QtQuick (QML) version of the modern replacement.  A ClearBitsQt.vcprojx called ClearBitsQt, which shares the same audio pipeline and buffer-sizing code but replaces the MFC UI with a Qt-based one.
+
+`ClearBits.sln` contains both these .vcxproj files.
 
 ## Build
 
-Open `ClearBits.sln` in Visual Studio 2022 and build, or use MSBuild from the command line:
+Build the solution (which has projects for both the MFC app and Qt app) with .\Build\buildcpp.ps1, fix errors as needed until success.
 
-```
-msbuild ClearBits.sln /p:Configuration=Release /p:Platform=Win32
-msbuild ClearBits.sln /p:Configuration=Debug /p:Platform=Win32
-```
-
-Output: `Release/ClearBits.exe` or `Debug/ClearBits.exe` (32-bit / Win32 only).
+Output: 
+* MFC:  `Release/ClearBits.exe` or `Debug/ClearBits.exe`
+* Qt:  `ClearBitsQt\build\Release\ClearBitsQt.exe` or `ClearBitsQt\build\Debug\ClearBitsQt.exe`
 
 There is no automated test suite or linter. The app itself is the demonstration/test vehicle.
 
-## Architecture
+## MFC Architecture
 
 The app is a single MFC dialog (`CClearBitsDlg`) launched by `CClearBitsApp`.
 
@@ -41,7 +44,7 @@ The app is a single MFC dialog (`CClearBitsDlg`) launched by `CClearBitsApp`.
 - `MP3/id3_int28` — ID3 tag parsing
 - `Dundas/` — third-party MFC helper controls (`OXStatic`, `OXInteger`, string ops)
 - `Layout/` — dynamic window layout
-
+ 
 ## Key Dependencies
 
 Windows system libraries (no external packages):
@@ -50,20 +53,10 @@ Windows system libraries (no external packages):
 - `vfw32.lib` — Video for Windows
 - Static MFC linkage (v145 toolset)
 
-## Qt/QtQuick replacement of MFC clearbits.exe
-A new target:  a Qt/QtQuick (QML) version of the app.  A new .vcprojx called ClearBitsQt, which shares the same audio pipeline and buffer-sizing code but replaces the MFC UI with a Qt-based one.
-The goal is to demonstrate that the ClearBits technique can be implemented in a modern cross-platform framework while retaining the same core functionality.
 
 ### Completed tasks
 
-1. Build the MFC app with buildcpp.ps1, fix errors as needed until success.
-2. Add a new ClearBits.vcprojx to the solution.  It will target the ClearBitsQt .exe, which will be the same as the existing MFC ClearBits.exe except it will be implemented with QtQuick.
-3. Build and run, it should show the same basic buttons, labels, comboboxes, listboxes, etc. as the MFC version
-4. Populate the listbox with hard coded .wav and .mp3 files found in "C:\Temp\ClearbitsTracks"
-5. Look at MFC\ClearBits.dlg and copy functionality of changing the "Play" button label to "Pause" when it is toggled.
-
 ### Next tasks
-1. Look at MFC\ClearBits.dlg and copy functionality of initializing audio playback, then starting/pausing/stop playback when the Play button is toggled (the same event that now changes the "Play" button label to "Pause" when it is toggled).  Goal is to get audio playing.  Assume the m_nAlgo remains at FIXED throughout, so you don't have to worry about the playback incorporting m_nAlgo for now.
 
 
 ## Proposed Future Work
