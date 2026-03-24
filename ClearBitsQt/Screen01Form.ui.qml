@@ -191,7 +191,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 4
-                    text: modelData
+                    text: modelData.replace(/\//g, "\\")
                     font.family: playPauseButton.font.family
                     font.pointSize: playPauseButton.font.pointSize
                     color: palette.windowText

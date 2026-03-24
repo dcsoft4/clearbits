@@ -6,6 +6,10 @@
 #include <QFileInfoList>
 #include <QFile>
 #include <QIODevice>
+#include <QTextStream>
+
+#include <cderr.h>
+#include <commdlg.h>
 
 #include <cstring>
 
@@ -13,6 +17,34 @@ namespace
 {
 const char kWaveDirectory[] = "C:/Temp/ClearbitsTracks";
 constexpr long kAlgoChangeRewindSeconds = 2;
+
+QString openFileDialogErrorMessage(DWORD errorCode)
+{
+    switch (errorCode) {
+    case FNERR_BUFFERTOOSMALL:
+        return QStringLiteral("The selection is too large for the file dialog buffer. "
+                              "Select fewer files or use shorter paths.");
+    case FNERR_INVALIDFILENAME:
+        return QStringLiteral("The file dialog reported an invalid file name.");
+    case FNERR_SUBCLASSFAILURE:
+        return QStringLiteral("The file dialog could not initialize correctly.");
+    case CDERR_INITIALIZATION:
+        return QStringLiteral("The file dialog failed to initialize.");
+    case CDERR_FINDRESFAILURE:
+    case CDERR_LOADRESFAILURE:
+    case CDERR_LOADSTRFAILURE:
+    case CDERR_LOCKRESFAILURE:
+        return QStringLiteral("The file dialog could not load required resources.");
+    case CDERR_MEMALLOCFAILURE:
+    case CDERR_MEMLOCKFAILURE:
+        return QStringLiteral("The file dialog ran out of memory.");
+    case CDERR_STRUCTSIZE:
+        return QStringLiteral("The file dialog was called with an invalid structure size.");
+    default:
+        return QStringLiteral("The file dialog failed with error 0x%1.")
+            .arg(errorCode, 0, 16).toUpper();
+    }
+}
 }
 
 // ---------------------------------------------------------------------------
@@ -40,7 +72,7 @@ void CALLBACK AppState::waveOutCallback(HWAVEOUT /*hwo*/, UINT uMsg,
 AppState::AppState(QObject *parent)
     : QObject(parent)
 {
-    loadPlaylist();
+    loadStartupPlaylist();
     m_progressTimer.setInterval(500);
     connect(&m_progressTimer, &QTimer::timeout, this, &AppState::updateProgressText);
 
@@ -204,6 +236,94 @@ void AppState::nextTrack()
     setSelectedIndex(m_selectedIndex + 1);
     if (wasPlaying)
         play();
+}
+
+void AppState::loadPlaylist()
+{
+    wchar_t szFile[32768] = {};
+    OPENFILENAMEW ofn = {};
+    ofn.lStructSize = sizeof(ofn);
+    ofn.lpstrFilter = L"Audio Files\0*.wav;*.mp3\0Playlists\0*.m3u\0All Files\0*.*\0\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = _countof(szFile);
+    ofn.Flags = OFN_ENABLESIZING | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST
+              | OFN_PATHMUSTEXIST | OFN_EXPLORER | OFN_ALLOWMULTISELECT;
+
+    if (!GetOpenFileNameW(&ofn)) {
+        const DWORD errorCode = CommDlgExtendedError();
+        if (errorCode != 0) {
+            const QString message = openFileDialogErrorMessage(errorCode);
+            MessageBoxW(nullptr,
+                        reinterpret_cast<LPCWSTR>(message.utf16()),
+                        L"Load Playlist",
+                        MB_OK | MB_ICONERROR);
+        }
+        return;
+    }
+
+    stop();
+    m_playlistEntries.clear();
+    if (m_selectedIndex != -1) {
+        m_selectedIndex = -1;
+        emit selectedIndexChanged();
+    }
+
+    auto appendM3uEntries = [this](const QString &playlistPath) {
+        QDir m3uDir = QFileInfo(playlistPath).absoluteDir();
+        QFile f(playlistPath);
+        if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&f);
+            while (!stream.atEnd()) {
+                QString line = stream.readLine().trimmed();
+                if (line.isEmpty() || line.startsWith(QLatin1Char('#')))
+                    continue;
+
+                QString entry = QDir::fromNativeSeparators(line);
+                if (QFileInfo(entry).isRelative())
+                    entry = QDir::fromNativeSeparators(m3uDir.absoluteFilePath(entry));
+                m_playlistEntries.append(entry);
+            }
+        }
+    };
+
+    const wchar_t *first = szFile;
+    const wchar_t *second = first + wcslen(first) + 1;
+    if (*second == L'\0') {
+        QString path = QDir::fromNativeSeparators(QString::fromWCharArray(first));
+        if (path.endsWith(".m3u", Qt::CaseInsensitive))
+            appendM3uEntries(path);
+        else
+            m_playlistEntries.append(path);
+    } else {
+        const QString directory = QDir::fromNativeSeparators(QString::fromWCharArray(first));
+        for (const wchar_t *name = second; *name != L'\0'; name += wcslen(name) + 1) {
+            const QString path = QDir::fromNativeSeparators(
+                QDir(directory).absoluteFilePath(QString::fromWCharArray(name)));
+            if (path.endsWith(".m3u", Qt::CaseInsensitive))
+                appendM3uEntries(path);
+            else
+                m_playlistEntries.append(path);
+        }
+    }
+
+    emit playlistEntriesChanged();
+
+    if (!m_playlistEntries.isEmpty()) {
+        m_selectedIndex = 0;
+        emit selectedIndexChanged();
+    }
+}
+
+void AppState::clearPlaylist()
+{
+    stop();
+    m_playlistEntries.clear();
+    emit playlistEntriesChanged();
+    if (m_selectedIndex != -1) {
+        m_selectedIndex = -1;
+        emit selectedIndexChanged();
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -416,7 +536,7 @@ bool AppState::play()
     int idx = (m_selectedIndex >= 0 && m_selectedIndex < m_playlistEntries.size())
               ? m_selectedIndex : 0;
 
-    QString filename = QString::fromLatin1(kWaveDirectory) + "/" + m_playlistEntries[idx];
+    QString filename = m_playlistEntries[idx];
 
     // Resume from paused position if applicable.
     bool hasPauseInfo = (!m_pauseFile.isEmpty() && m_pauseFile == m_playlistEntries[idx]);
@@ -453,9 +573,8 @@ void AppState::pause()
     long    savedPos = playbackPositionBytes();
     QString savedProgressText = m_progressText;
     if (m_waveReader.IsOpen()) {
-        // GetFileName() returns the full path; store only the basename so it
-        // matches the bare filenames in m_playlistEntries used by play().
-        savedFile = QFileInfo(QString::fromWCharArray(m_waveReader.GetFileName())).fileName();
+        savedFile = QDir::fromNativeSeparators(
+            QString::fromWCharArray(m_waveReader.GetFileName()));
     }
 
     stop();   // closes reader, clears m_pauseFile/m_pausePos, sets playing=false
@@ -491,7 +610,7 @@ void AppState::stop()
 // ---------------------------------------------------------------------------
 // Playlist
 // ---------------------------------------------------------------------------
-void AppState::loadPlaylist()
+void AppState::loadStartupPlaylist()
 {
     QDir waveDirectory(QString::fromLatin1(kWaveDirectory));
     const QFileInfoList entries = waveDirectory.entryInfoList(
@@ -503,7 +622,7 @@ void AppState::loadPlaylist()
     playlistEntries.reserve(entries.size());
 
     for (const QFileInfo &entry : entries)
-        playlistEntries.append(entry.fileName());
+        playlistEntries.append(QDir::fromNativeSeparators(entry.absoluteFilePath()));
 
     if (m_playlistEntries == playlistEntries)
         return;

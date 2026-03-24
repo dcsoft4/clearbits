@@ -17,6 +17,8 @@ Screen01Form {
     seekBackButton.onClicked: seekBackSmall()
     seekForwardButton.onClicked: seekForwardSmall()
     seekForwardLargeButton.onClicked: seekForwardLarge()
+    loadLinkArea.onClicked: appState.loadPlaylist()
+    clearLinkArea.onClicked: appState.clearPlaylist()
     playlistView.model: appState.playlistEntries
     algoCombo.currentIndex: appState.algo
     progressText.text: appState.progressText

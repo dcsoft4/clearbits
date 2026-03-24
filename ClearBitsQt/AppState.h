@@ -50,6 +50,8 @@ public:
     Q_INVOKABLE void seekRelativeSeconds(int seconds);
     Q_INVOKABLE void prevTrack();
     Q_INVOKABLE void nextTrack();
+    Q_INVOKABLE void loadPlaylist();
+    Q_INVOKABLE void clearPlaylist();
 
 public slots:
     void setPlaying(bool playing);
@@ -67,7 +69,7 @@ protected:
     bool event(QEvent *e) override;
 
 private:
-    void loadPlaylist();
+    void loadStartupPlaylist();
     bool openOutDevice(WAVEFORMATEX *pwfx);   // nullptr => standard 44.1K/16-bit/stereo
     void closeOutDevice();
     void playBuffer(CSampleBuffer *pSB);
