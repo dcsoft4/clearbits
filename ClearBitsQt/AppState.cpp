@@ -12,6 +12,7 @@
 namespace
 {
 const char kWaveDirectory[] = "C:/Temp/ClearbitsTracks";
+constexpr long kAlgoChangeRewindSeconds = 3;
 }
 
 // ---------------------------------------------------------------------------
@@ -118,8 +119,15 @@ void AppState::setAlgo(int algo)
         return;
 
     if (m_hWaveOut) {
-        if (m_playing) {
-            m_playbackPositionBytes = playbackPositionBytes();
+        if (m_playing && m_waveReader.IsOpen()) {
+            long newPosition = playbackPositionBytes()
+                             - static_cast<long>(m_wfx.nAvgBytesPerSec * kAlgoChangeRewindSeconds);
+            if (newPosition < 0)
+                newPosition = 0;
+
+            m_waveReader.Seek(newPosition);
+            m_playbackPositionBytes = newPosition;
+            updateProgressText();
         }
 
         waveOutReset(m_hWaveOut);   // Match MFC: refill buffers immediately using the new algorithm.
