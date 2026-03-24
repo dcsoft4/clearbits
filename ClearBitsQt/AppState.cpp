@@ -143,6 +143,12 @@ void AppState::setSelectedIndex(int index)
         return;
     m_selectedIndex = index;
     emit selectedIndexChanged();
+
+    if (m_waveReader.IsOpen()) {
+        stop();
+        if (m_selectedIndex >= 0 && m_selectedIndex < m_playlistEntries.size())
+            play();
+    }
 }
 
 void AppState::setAlgo(int algo)
