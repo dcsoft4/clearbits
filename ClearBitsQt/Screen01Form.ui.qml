@@ -88,21 +88,21 @@ Rectangle {
                 id: prevButton
                 text: qsTr("<< Prev")
                 Layout.preferredWidth: 100
-                ToolTip { text: qsTr("Previous track"); visible: parent.hovered; y: parent.height + 4 }
+                ToolTip { text: qsTr("[↑] Previous track"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
                 id: playPauseButton
                 text: qsTr("Play")
                 Layout.preferredWidth: 100
-                ToolTip { text: qsTr("Toggle play/pause"); visible: parent.hovered; y: parent.height + 4 }
+                ToolTip { text: qsTr("[Space] Toggle play/pause"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
                 id: nextButton
                 text: qsTr("Next >>")
                 Layout.preferredWidth: 100
-                ToolTip { text: qsTr("Next track"); visible: parent.hovered; y: parent.height + 4 }
+                ToolTip { text: qsTr("[↓] Next track"); visible: parent.hovered; y: parent.height + 4 }
             }
         }
 

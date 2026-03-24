@@ -65,6 +65,16 @@ Screen01Form {
         onActivated: seekForwardLarge()
     }
 
+    Shortcut {
+        sequence: "Up"
+        onActivated: appState.prevTrack()
+    }
+
+    Shortcut {
+        sequence: "Down"
+        onActivated: appState.nextTrack()
+    }
+
     // Sync C++ → view: use Connections (not a declarative binding) so that
     // imperative assignments from the delegate don't break the update path.
     Connections {
