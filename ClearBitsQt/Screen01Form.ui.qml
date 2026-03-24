@@ -70,6 +70,13 @@ Rectangle {
             ComboBox {
                 id: algoCombo
                 model: ["[F1] Fixed", "[F2] rand()", "[F3]CAPI", "[F4] Random.org"]
+                ToolTip.text: [
+                    qsTr("Buffers are fixed size containing 2 seconds of audio, the standardmethod used by audio players"),
+                    qsTr("Buffer sizes are determined by the VC rand() algorithm, notorious for poor randomness"),
+                    qsTr("Buffer sizes are determined by the CryptGenRandom() algorithm, known for good randomness"),
+                    qsTr("Buffer sizes are determined by real-world occurring random numbers from random.org")
+                ][currentIndex]
+                ToolTip.visible: hovered
                 Layout.preferredWidth: 170
             }
 
@@ -79,20 +86,23 @@ Rectangle {
 
             Button {
                 id: prevButton
-                text: qsTr("<< Back")
+                text: qsTr("<< Prev")
                 Layout.preferredWidth: 100
+                ToolTip { text: qsTr("Previous track"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
                 id: playPauseButton
                 text: qsTr("Play")
                 Layout.preferredWidth: 100
+                ToolTip { text: qsTr("Toggle play/pause"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
                 id: nextButton
                 text: qsTr("Next >>")
                 Layout.preferredWidth: 100
+                ToolTip { text: qsTr("Next track"); visible: parent.hovered; y: parent.height + 4 }
             }
         }
 
@@ -126,6 +136,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 60
                 color: palette.windowText
+                ToolTip { text: qsTr("Position in current track (M:SS)"); visible: parent.hovered; y: parent.height + 4 }
             }
 
             Button {
@@ -150,6 +161,7 @@ Rectangle {
             Layout.fillHeight: true
             Layout.topMargin: 8
             clip: true
+            ToolTip { text: qsTr("Click to play selected track"); visible: parent.hovered; y: parent.height + 4 }
 
             model: ListModel {
                 id: playlistModel
