@@ -48,6 +48,8 @@ public:
 
     Q_INVOKABLE void togglePlaying();
     Q_INVOKABLE void seekRelativeSeconds(int seconds);
+    Q_INVOKABLE void prevTrack();
+    Q_INVOKABLE void nextTrack();
 
 public slots:
     void setPlaying(bool playing);

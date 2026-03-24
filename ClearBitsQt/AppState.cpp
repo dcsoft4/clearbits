@@ -182,6 +182,30 @@ void AppState::seekRelativeSeconds(int seconds)
     }
 }
 
+void AppState::prevTrack()
+{
+    if (m_selectedIndex <= 0)
+        return;
+
+    bool wasPlaying = m_waveReader.IsOpen();
+    stop();
+    setSelectedIndex(m_selectedIndex - 1);
+    if (wasPlaying)
+        play();
+}
+
+void AppState::nextTrack()
+{
+    if (m_selectedIndex >= m_playlistEntries.size() - 1)
+        return;
+
+    bool wasPlaying = m_waveReader.IsOpen();
+    stop();
+    setSelectedIndex(m_selectedIndex + 1);
+    if (wasPlaying)
+        play();
+}
+
 // ---------------------------------------------------------------------------
 // event — handle WomDoneEvent on the main thread
 // ---------------------------------------------------------------------------

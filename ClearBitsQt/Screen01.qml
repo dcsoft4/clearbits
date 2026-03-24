@@ -11,6 +11,8 @@ Screen01Form {
 
     playPauseButton.text: appState.playing ? qsTr("Pause") : qsTr("Play")
     playPauseButton.onClicked: appState.togglePlaying()
+    prevButton.onClicked: appState.prevTrack()
+    nextButton.onClicked: appState.nextTrack()
     seekBackFastButton.onClicked: seekBackLarge()
     seekBackButton.onClicked: seekBackSmall()
     seekForwardButton.onClicked: seekForwardSmall()
