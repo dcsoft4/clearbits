@@ -107,6 +107,10 @@ void AppState::setAlgo(int algo)
     if (m_nAlgo == algo)
         return;
     m_nAlgo = algo;
+
+    if (m_hWaveOut)
+        waveOutReset(m_hWaveOut);   // Match MFC: refill buffers immediately using the new algorithm.
+
     emit algoChanged();
 }
 
