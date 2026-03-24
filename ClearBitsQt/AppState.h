@@ -12,6 +12,8 @@
 #define NUM_SAMPLE_BUFFERS 2
 #define MAX_SOUNDBUF_SIZE  (176400 * 5)   // ~5 seconds at 44.1K/16-bit/stereo
 
+enum Algo { ALGO_FIXED = 0, ALGO_VC, ALGO_CAPI, ALGO_RANDOM_ORG, NUM_ALGOS };
+
 // Custom Qt event posted from the waveOut callback thread when a buffer finishes.
 class WomDoneEvent : public QEvent
 {
@@ -30,6 +32,7 @@ class AppState : public QObject
     Q_PROPERTY(QStringList playlistEntries READ playlistEntries NOTIFY playlistEntriesChanged)
     Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
+    Q_PROPERTY(int algo READ algo WRITE setAlgo NOTIFY algoChanged)
 
 public:
     explicit AppState(QObject *parent = nullptr);
@@ -38,17 +41,20 @@ public:
     QStringList playlistEntries() const;
     bool playing() const;
     int selectedIndex() const;
+    int algo() const;
 
     Q_INVOKABLE void togglePlaying();
 
 public slots:
     void setPlaying(bool playing);
     void setSelectedIndex(int index);
+    void setAlgo(int algo);
 
 signals:
     void playlistEntriesChanged();
     void playingChanged();
     void selectedIndexChanged();
+    void algoChanged();
 
 protected:
     bool event(QEvent *e) override;
@@ -61,7 +67,11 @@ private:
     bool play();
     void pause();
     void stop();
+    LONG getNextBufSize();
     LONG getNextBufSize_Fixed();
+    LONG getNextBufSize_VC();
+    LONG getNextBufSize_CAPI();
+    LONG getNextBufSize_RandomOrg();
 
     static void CALLBACK waveOutCallback(HWAVEOUT hwo, UINT uMsg,
                                          DWORD_PTR dwInstance,
@@ -71,13 +81,17 @@ private:
     QStringList m_playlistEntries;
     bool m_playing = false;
     int m_selectedIndex = -1;
+    int m_nAlgo = ALGO_FIXED;
 
     HWAVEOUT m_hWaveOut = nullptr;
     WAVEFORMATEX m_wfx = {};
     CSampleBuffer m_arrSB[NUM_SAMPLE_BUFFERS];
+    HCRYPTPROV m_hProvider = 0;
 
     McWaveReader m_waveReader;
 
     QString m_pauseFile;
     long    m_pausePos = 0;
+    QByteArray m_randomOrgData;
+    int m_randomOrgPos = 0;
 };

@@ -4,6 +4,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFileInfoList>
+#include <QFile>
+#include <QIODevice>
 
 #include <cstring>
 
@@ -40,6 +42,11 @@ AppState::AppState(QObject *parent)
     loadPlaylist();
 
     m_waveReader.Create();
+    CryptAcquireContext(&m_hProvider, nullptr, nullptr, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);
+
+    QFile f(":/random.bin");
+    if (f.open(QIODevice::ReadOnly))
+        m_randomOrgData = f.readAll();
 
     // Open audio device and pre-fill buffers with silence (no file open yet).
     if (openOutDevice(nullptr)) {
@@ -53,6 +60,11 @@ AppState::AppState(QObject *parent)
 AppState::~AppState()
 {
     // Stop playback and clean up.
+    if (m_hProvider) {
+        CryptReleaseContext(m_hProvider, 0);
+        m_hProvider = 0;
+    }
+
     m_waveReader.Close();
 
     if (m_hWaveOut) {
@@ -72,6 +84,7 @@ AppState::~AppState()
 QStringList AppState::playlistEntries() const { return m_playlistEntries; }
 bool        AppState::playing()          const { return m_playing; }
 int         AppState::selectedIndex()    const { return m_selectedIndex; }
+int         AppState::algo()             const { return m_nAlgo; }
 
 void AppState::setPlaying(bool playing)
 {
@@ -87,6 +100,14 @@ void AppState::setSelectedIndex(int index)
         return;
     m_selectedIndex = index;
     emit selectedIndexChanged();
+}
+
+void AppState::setAlgo(int algo)
+{
+    if (m_nAlgo == algo)
+        return;
+    m_nAlgo = algo;
+    emit algoChanged();
 }
 
 // ---------------------------------------------------------------------------
@@ -171,7 +192,7 @@ void AppState::playBuffer(CSampleBuffer *pSB)
     if (!m_hWaveOut)
         return;
 
-    LONG lBufSize = getNextBufSize_Fixed();
+    LONG lBufSize = getNextBufSize();
 
     pSB->UnprepareOut(m_hWaveOut);
     pSB->PrepareOut(m_hWaveOut, lBufSize);
@@ -207,6 +228,50 @@ LONG AppState::getNextBufSize_Fixed()
     WORD wSample  = 0x8000;
     LONG lBufSize = (m_wfx.nAvgBytesPerSec * 2) + (wSample * m_wfx.nBlockAlign);
     return lBufSize;
+}
+
+LONG AppState::getNextBufSize()
+{
+    switch (m_nAlgo) {
+    case ALGO_VC:
+        return getNextBufSize_VC();
+    case ALGO_CAPI:
+        return getNextBufSize_CAPI();
+    case ALGO_RANDOM_ORG:
+        return getNextBufSize_RandomOrg();
+    default:
+        return getNextBufSize_Fixed();
+    }
+}
+
+LONG AppState::getNextBufSize_VC()
+{
+    WORD wSample = static_cast<WORD>((rand() << 1) | (rand() & 0x0001));
+    return (m_wfx.nAvgBytesPerSec * 2) + (wSample * m_wfx.nBlockAlign);
+}
+
+LONG AppState::getNextBufSize_CAPI()
+{
+    WORD wSample = 0;
+    if (m_hProvider)
+        CryptGenRandom(m_hProvider, sizeof(wSample), reinterpret_cast<BYTE *>(&wSample));
+    return (m_wfx.nAvgBytesPerSec * 2) + (wSample * m_wfx.nBlockAlign);
+}
+
+LONG AppState::getNextBufSize_RandomOrg()
+{
+    if (m_randomOrgData.size() < static_cast<int>(sizeof(WORD)))
+        return getNextBufSize_Fixed();
+
+    WORD wSample;
+    memcpy(&wSample, m_randomOrgData.constData() + m_randomOrgPos, sizeof(wSample));
+    m_randomOrgPos += static_cast<int>(sizeof(wSample));
+    if (m_randomOrgPos + static_cast<int>(sizeof(wSample)) > m_randomOrgData.size())
+        m_randomOrgPos = 0;
+
+    wSample = MAKEWORD(HIBYTE(wSample), LOBYTE(wSample));
+
+    return (m_wfx.nAvgBytesPerSec * 2) + (wSample * m_wfx.nBlockAlign);
 }
 
 // ---------------------------------------------------------------------------

@@ -11,6 +11,7 @@
 #include <mmsystem.h>
 #include <mmreg.h>
 #include <msacm.h>
+#include <wincrypt.h>
 #include <atlstr.h>
 #include <cassert>
 

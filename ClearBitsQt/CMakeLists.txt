@@ -31,6 +31,12 @@ qt_add_resources(ClearBitsQt "conf"
     FILES qtquickcontrols2.conf
 )
 
+qt_add_resources(ClearBitsQt "data"
+    PREFIX "/"
+    FILES
+        ../res/random.bin
+)
+
 set_target_properties(ClearBitsQt PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
@@ -52,5 +58,5 @@ endif()
 
 target_link_libraries(ClearBitsQt
     PRIVATE Qt6::Quick Qt6::QuickControls2
-    winmm Msacm32 vfw32
+    winmm Msacm32 vfw32 advapi32
 )
