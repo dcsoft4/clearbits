@@ -48,7 +48,8 @@ Rectangle {
                 id: titleText
                 text: qsTr("C L E A R B I T S   M U S I C   P L A Y E R")
                 Layout.fillWidth: true
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 font.bold: true
                 color: palette.windowText
             }
@@ -56,7 +57,8 @@ Rectangle {
             Text {
                 id: formatText
                 text: qsTr("44 KHz / 16 bit / Stereo")
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 horizontalAlignment: Text.AlignRight
                 color: palette.windowText
             }
@@ -132,11 +134,15 @@ Rectangle {
             Text {
                 id: progressText
                 text: qsTr("0:00")
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.preferredWidth: 60
                 color: palette.windowText
-                ToolTip { text: qsTr("Position in current track (M:SS)"); visible: parent.hovered; y: parent.height + 4 }
+                HoverHandler {
+                    id: progressHover
+                }
+                ToolTip { text: qsTr("Position in current track (M:SS)"); visible: progressHover.hovered; y: parent.height + 4 }
             }
 
             Button {
@@ -161,7 +167,6 @@ Rectangle {
             Layout.fillHeight: true
             Layout.topMargin: 8
             clip: true
-            ToolTip { text: qsTr("Click to play selected track"); visible: parent.hovered; y: parent.height + 4 }
 
             model: ListModel {
                 id: playlistModel
@@ -177,14 +182,26 @@ Rectangle {
                 width: playlistView.width
                 height: delegateText.implicitHeight + 4
 
+                HoverHandler {
+                    id: delegateHover
+                }
+
                 Text {
                     id: delegateText
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 4
                     text: modelData
-                    font.family: Qt.application.font.family
+                    font.family: playPauseButton.font.family
+                    font.pointSize: playPauseButton.font.pointSize
                     color: palette.windowText
+                }
+
+                ToolTip {
+                    text: qsTr("Click to select this track; double-click to toggle play/pause")
+                    visible: delegateHover.hovered
+                    x: delegateHover.point.position.x
+                    y: parent.height + 4
                 }
 
                 MouseArea {
@@ -209,7 +226,8 @@ Rectangle {
             Text {
                 id: loadLink
                 text: qsTr("Load")
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 color: palette.link
                 MouseArea {
                     id: loadLinkArea
@@ -221,7 +239,8 @@ Rectangle {
             Text {
                 id: clearLink
                 text: qsTr("Clear")
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 color: palette.link
                 MouseArea {
                     id: clearLinkArea
@@ -233,7 +252,8 @@ Rectangle {
             Text {
                 id: deleteLink
                 text: qsTr("Delete file")
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 color: palette.link
                 visible: false
                 MouseArea {
@@ -245,7 +265,8 @@ Rectangle {
             Text {
                 id: moveLink
                 text: qsTr("Move file")
-                font.family: Qt.application.font.family
+                font.family: playPauseButton.font.family
+                font.pointSize: playPauseButton.font.pointSize
                 color: palette.link
                 visible: false
                 MouseArea {

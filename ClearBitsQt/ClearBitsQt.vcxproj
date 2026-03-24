@@ -57,6 +57,8 @@
   <ItemGroup>
     <None Include="CMakeLists.txt" />
     <None Include="Main.qml" />
+    <None Include="Screen01.qml" />
+    <None Include="Screen01Form.ui.qml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
