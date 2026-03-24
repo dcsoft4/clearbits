@@ -261,6 +261,7 @@ Rectangle {
             CheckBox {
                 id: shuffleCheck
                 text: qsTr("Shuffle")
+                visible: false
             }
         }
     }
