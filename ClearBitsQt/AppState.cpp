@@ -423,7 +423,67 @@ void AppState::playBuffer(CSampleBuffer *pSB)
                     // PCM short reads mean EOF. For MP3, only stop once the decoder has
                     // actually reported end-of-file; short fills after a seek can be transient.
                     m_waveReader.Close();
-                    setPlaying(false);
+                    m_pauseFile.clear();    // don't leak pause state across track boundary
+                    m_pausePos = 0;
+
+                    if (m_selectedIndex < m_playlistEntries.size() - 1) {
+                        ++m_selectedIndex;
+                        // Don't emit selectedIndexChanged() yet for the gapless path —
+                        // deferred until the old-track tail is audibly finished.
+                        const HWAVEOUT oldDevice = m_hWaveOut;
+                        if (play(/*resetDevice=*/false)) {
+                            if (m_hWaveOut != oldDevice) {
+                                // Format change: device was reset, hardware counter is 0,
+                                // m_playbackPositionBytes = 0 (from play()) is correct.
+                                // No tail in the buffer — emit UI updates immediately.
+                                emit selectedIndexChanged();
+                                setProgressTextForBytes(0);
+                                // Re-prepare pSB for the new device and fill a full fresh buffer.
+                                pSB->PrepareOut(m_hWaveOut, lBufSize);
+                                lBytesFilled = 0;
+                            } else {
+                                // Gapless same-device advance. Rebase m_playbackPositionBytes so
+                                // playbackPositionBytes() = 0 when the new track becomes audible.
+                                // The new track starts lBytesFilled bytes into the not-yet-submitted
+                                // buffer, so subtract both the hardware position and the tail ahead.
+                                MMTIME mmt = {};
+                                mmt.wType = TIME_BYTES;
+                                if (waveOutGetPosition(m_hWaveOut, &mmt, sizeof(mmt)) == MMSYSERR_NOERROR
+                                        && mmt.wType == TIME_BYTES)
+                                    m_playbackPositionBytes = -static_cast<long>(mmt.u.cb) - lBytesFilled;
+                                else
+                                    m_playbackPositionBytes = 0;
+
+                                // Defer UI updates until the old-track tail has drained.
+                                // Capture bytes/sec before play() — same format is guaranteed
+                                // in the same-device path, but capturing first is explicit.
+                                const DWORD bytesPerSec = m_wfx.nAvgBytesPerSec;
+                                const int tailMs = (bytesPerSec > 0)
+                                    ? static_cast<int>(lBytesFilled * 1000LL / bytesPerSec)
+                                    : 0;
+                                const int gen = ++m_advanceGeneration;
+                                m_suppressProgressUpdate = true;
+                                QTimer::singleShot(tailMs, this, [this, gen]() {
+                                    if (m_advanceGeneration != gen)
+                                        return;  // stale: stop() already cleared m_suppressProgressUpdate
+                                    m_suppressProgressUpdate = false;
+                                    emit selectedIndexChanged();
+                                    setProgressTextForBytes(0);
+                                });
+                            }
+                            // Fill remainder (or full buffer on format change) from the new track.
+                            DWORD dwWritten2 = 0;
+                            if (m_waveReader.Read(static_cast<DWORD>(lBufSize - lBytesFilled),
+                                                  reinterpret_cast<BYTE *>(pSB->m_pData + lBytesFilled),
+                                                  &dwWritten2))
+                                lBytesFilled += static_cast<LONG>(dwWritten2);
+                        } else {
+                            emit selectedIndexChanged();  // m_selectedIndex advanced; keep UI consistent
+                            setPlaying(false);
+                        }
+                    } else {
+                        setPlaying(false);
+                    }
                 }
             }
         }
@@ -502,7 +562,10 @@ long AppState::playbackPositionBytes() const
     if (mmTime.wType != TIME_BYTES)
         return m_playbackPositionBytes;
 
-    return m_playbackPositionBytes + static_cast<long>(mmTime.u.cb);
+    // Clamp to 0: can briefly go negative during a gapless advance while the
+    // hardware is still playing the old-track tail in the mixed buffer.
+    const long pos = m_playbackPositionBytes + static_cast<long>(mmTime.u.cb);
+    return pos < 0 ? 0 : pos;
 }
 
 void AppState::setProgressTextForBytes(long bytes)
@@ -522,6 +585,8 @@ void AppState::setProgressTextForBytes(long bytes)
 
 void AppState::updateProgressText()
 {
+    if (m_suppressProgressUpdate)
+        return;
     if (!m_playing || m_wfx.nAvgBytesPerSec == 0)
         return;
 
@@ -531,7 +596,7 @@ void AppState::updateProgressText()
 // ---------------------------------------------------------------------------
 // Play / Pause / Stop
 // ---------------------------------------------------------------------------
-bool AppState::play()
+bool AppState::play(bool resetDevice)
 {
     if (m_waveReader.IsOpen())
         return true;   // Already playing.
@@ -564,7 +629,8 @@ bool AppState::play()
         return false;
     }
 
-    waveOutReset(m_hWaveOut);
+    if (resetDevice)
+        waveOutReset(m_hWaveOut);
 
     setPlaying(true);
     return true;
@@ -575,6 +641,7 @@ void AppState::pause()
     // Bug fix: save to locals before stop() clears the members.
     // Bug fix: use GetFileName() (actual open file) not selectedIndex
     //   (UI selection), which could differ if user clicked another item.
+    const bool inTail = m_suppressProgressUpdate;
     QString savedFile;
     long    savedPos = playbackPositionBytes();
     QString savedProgressText = m_progressText;
@@ -588,7 +655,10 @@ void AppState::pause()
     // Restore pause state that stop() cleared.
     m_pauseFile = savedFile;
     m_pausePos  = savedPos;
-    if (m_progressText != savedProgressText) {
+    // During a deferred gapless-advance tail, savedProgressText is the old track's
+    // near-EOF time, but savedFile/savedPos are already for the new track at ~0.
+    // stop() already set "0:00", which is correct — don't restore the stale text.
+    if (!inTail && m_progressText != savedProgressText) {
         m_progressText = savedProgressText;
         emit progressTextChanged();
     }
@@ -604,6 +674,9 @@ void AppState::stop()
     m_pauseFile.clear();
     m_pausePos = 0;
     m_playbackPositionBytes = 0;
+    ++m_advanceGeneration;          // invalidate any pending deferred UI update
+    const bool suppressedProgressUpdates = m_suppressProgressUpdate;
+    m_suppressProgressUpdate = false;
 
     if (m_progressText != QStringLiteral("0:00")) {
         m_progressText = QStringLiteral("0:00");
@@ -611,6 +684,11 @@ void AppState::stop()
     }
 
     setPlaying(false);
+
+    // If stop() interrupted a deferred gapless advance, m_selectedIndex is already
+    // on the new track but QML hasn't been notified. Emit now so the UI is consistent.
+    if (suppressedProgressUpdates)
+        emit selectedIndexChanged();
 }
 
 // ---------------------------------------------------------------------------

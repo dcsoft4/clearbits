@@ -73,7 +73,7 @@ private:
     bool openOutDevice(WAVEFORMATEX *pwfx);   // nullptr => standard 44.1K/16-bit/stereo
     void closeOutDevice();
     void playBuffer(CSampleBuffer *pSB);
-    bool play();
+    bool play(bool resetDevice = true);
     void pause();
     void stop();
     LONG getNextBufSize();
@@ -109,4 +109,6 @@ private:
     int m_randomOrgPos = 0;
     QString m_progressText = QStringLiteral("0:00");
     long m_playbackPositionBytes = 0;
+    bool m_suppressProgressUpdate = false;
+    int  m_advanceGeneration = 0;
 };
