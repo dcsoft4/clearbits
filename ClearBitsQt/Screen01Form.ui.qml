@@ -21,7 +21,6 @@ Rectangle {
     property alias nextButton: nextButton
     property alias algoCombo: algoCombo
     property alias progressText: progressText
-    property alias formatText: formatText
     property alias shuffleCheck: shuffleCheck
     property alias playlistView: playlistView
     property alias loadLinkArea: loadLinkArea
@@ -54,15 +53,6 @@ Rectangle {
                 font.bold: true
                 color: palette.windowText
             }
-
-            Text {
-                id: formatText
-                text: qsTr("44 KHz / 16 bit / Stereo")
-                font.family: playPauseButton.font.family
-                font.pointSize: playPauseButton.font.pointSize
-                horizontalAlignment: Text.AlignRight
-                color: palette.windowText
-            }
         }
 
         // --- Controls row: Algorithm | Prev | Play | Next ---
@@ -91,21 +81,21 @@ Rectangle {
                 id: prevButton
                 text: qsTr("<< Prev")
                 Layout.preferredWidth: 100
-                ToolTip { text: qsTr("[↑] Previous track"); visible: parent.hovered; y: parent.height + 4 }
+                ToolTip { text: qsTr("[↑] Previous track"); visible: parent.hovered }
             }
 
             Button {
                 id: playPauseButton
                 text: qsTr("Play")
                 Layout.preferredWidth: 100
-                ToolTip { text: qsTr("[Space] Toggle play/pause"); visible: parent.hovered; y: parent.height + 4 }
+                ToolTip { text: qsTr("[Space] Toggle play/pause"); visible: parent.hovered }
             }
 
             Button {
                 id: nextButton
                 text: qsTr("Next >>")
                 Layout.preferredWidth: 100
-                ToolTip { text: qsTr("[↓] Next track"); visible: parent.hovered; y: parent.height + 4 }
+                ToolTip { text: qsTr("[↓] Next track"); visible: parent.hovered }
             }
         }
 
