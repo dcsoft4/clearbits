@@ -25,6 +25,11 @@ Screen01Form {
 
     // Sync view → C++: delegate clicks set currentIndex imperatively; forward to appState.
     playlistView.onCurrentIndexChanged: appState.selectedIndex = form.playlistView.currentIndex
+    onPlaylistItemDoubleClicked: function(index) {
+        if (form.playlistView.currentIndex !== index)
+            form.playlistView.currentIndex = index
+        appState.togglePlaying()
+    }
     algoCombo.onCurrentIndexChanged: appState.algo = form.algoCombo.currentIndex
 
     Shortcut {

@@ -13,6 +13,7 @@ Rectangle {
     id: root
     width: 640
     height: 480
+    signal playlistItemDoubleClicked(int index)
 
     // Property aliases — Screen01.qml wires logic through these
     property alias playPauseButton: playPauseButton
@@ -218,6 +219,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: playlistView.currentIndex = index
+                    onDoubleClicked: root.playlistItemDoubleClicked(index)
                 }
             }
 
