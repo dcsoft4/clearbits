@@ -8,6 +8,9 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    app.setOrganizationName(QStringLiteral("DCSoft"));
+    app.setApplicationName(QStringLiteral("ClearBitsQt"));
+
     QQmlApplicationEngine engine;
     AppState appState;
     engine.rootContext()->setContextProperty("appState", &appState);

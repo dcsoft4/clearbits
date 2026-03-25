@@ -3,9 +3,9 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <QFileInfoList>
 #include <QFile>
 #include <QIODevice>
+#include <QStandardPaths>
 #include <QTextStream>
 
 #include <cderr.h>
@@ -16,7 +16,6 @@
 
 namespace
 {
-const char kWaveDirectory[] = "C:/Temp/ClearbitsTracks";
 constexpr long kAlgoChangeRewindSeconds = 2;
 
 QString openFileDialogErrorMessage(DWORD errorCode)
@@ -100,6 +99,18 @@ AppState::AppState(QObject *parent)
 
 AppState::~AppState()
 {
+    // Persist playlist for next session.
+    {
+        const QString dirPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+        QDir().mkpath(dirPath);
+        QFile f(dirPath + QStringLiteral("/save_tracklist.txt"));
+        if (f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+            QTextStream out(&f);
+            for (const QString &entry : std::as_const(m_playlistEntries))
+                out << entry << '\n';
+        }
+    }
+
     // Stop playback and clean up.
     if (m_hProvider) {
         CryptReleaseContext(m_hProvider, 0);
@@ -702,21 +713,28 @@ void AppState::stop()
 // ---------------------------------------------------------------------------
 void AppState::loadStartupPlaylist()
 {
-    QDir waveDirectory(QString::fromLatin1(kWaveDirectory));
-    const QFileInfoList entries = waveDirectory.entryInfoList(
-        QStringList() << "*.wav" << "*.mp3",
-        QDir::Files | QDir::Readable,
-        QDir::Name | QDir::IgnoreCase);
-
-    QStringList playlistEntries;
-    playlistEntries.reserve(entries.size());
-
-    for (const QFileInfo &entry : entries)
-        playlistEntries.append(QDir::fromNativeSeparators(entry.absoluteFilePath()));
-
-    if (m_playlistEntries == playlistEntries)
+    const QString path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+                         + QStringLiteral("/save_tracklist.txt");
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
 
-    m_playlistEntries = playlistEntries;
+    QStringList entries;
+    QTextStream in(&f);
+    while (!in.atEnd()) {
+        const QString line = in.readLine().trimmed();
+        if (!line.isEmpty())
+            entries.append(line);
+    }
+
+    if (m_playlistEntries == entries)
+        return;
+
+    m_playlistEntries = entries;
     emit playlistEntriesChanged();
+
+    if (!m_playlistEntries.isEmpty()) {
+        m_selectedIndex = 0;
+        emit selectedIndexChanged();
+    }
 }
