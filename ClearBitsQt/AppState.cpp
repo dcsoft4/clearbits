@@ -11,6 +11,7 @@
 #include <cderr.h>
 #include <commdlg.h>
 
+#include <ctime>
 #include <cstring>
 
 namespace
@@ -73,12 +74,17 @@ AppState::AppState(QObject *parent)
     : QObject(parent)
 {
     loadStartupPlaylist();
+
     m_progressTimer.setInterval(500);
     connect(&m_progressTimer, &QTimer::timeout, this, &AppState::updateProgressText);
 
     m_waveReader.Create();
     CryptAcquireContext(&m_hProvider, nullptr, nullptr, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT);
 
+    // Seed random number generator for rand() algo
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    // Load random.org data for random.org algo
     QFile f(":/random.bin");
     if (f.open(QIODevice::ReadOnly))
         m_randomOrgData = f.readAll();
