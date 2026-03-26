@@ -1,13 +1,14 @@
 # ClearBits Music Player
 
-![ClearBits Screenshot](Doc/ClearBitsSS.png)
+![ClearBitsQt Screenshot](Doc/ClearBitsQtSS.png)<br>
+ClearBits Music Player (the new Qt version)
 
 ## Welcome
 ClearBits is a technique that varies audio buffer sizes during playback in order to explore whether such changes may affect the perceived sound quality of audio.
 
-The ClearBits Music Player (ClearBits.exe) is a Windows-based audio player app that allows enabling and disabling of the ClearBits technique while playing the user's choice of WAVE / MP3 audio files and to easily seek within them.  It is intended to allow users to evaluate the ClearBits effect for for themselves using familiar and repeatable audio sources.
+The ClearBits Music Player (ClearBitsQt.exe) is a Windows-based audio player app that allows enabling and disabling of the ClearBits technique while playing the user's choice of WAVE / MP3 audio files and to easily seek within them.  It is intended to allow users to evaluate the ClearBits effect for for themselves using familiar and repeatable audio sources.
 
-Please see the [home page](https://dcsoft.com/products/clearbits) for full information.
+Please see the [home page](https://dcsoft.com/products/clearbits) for full information.  NOTE:  The original ClearBits described on the home page will soon be replaced with the Qt version.
 
 &nbsp;
 
