@@ -20,7 +20,7 @@ $ScriptDir = $PSScriptRoot
 #   -SkipAutomaticLocation  Prevents changing current directory to VS install folder;
 #                           we need to stay in the project directory to find the .sln
 if (-not $env:VSCMD_VER) {
-    & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64 -SkipAutomaticLocation
+    & "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64 -SkipAutomaticLocation
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to setup Visual Studio environment"

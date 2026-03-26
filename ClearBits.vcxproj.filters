@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -8,11 +8,14 @@
     <Filter Include="Source Files\MP3">
       <UniqueIdentifier>{2bb395e2-5a34-499e-98cc-cec7250120b9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Dundas">
-      <UniqueIdentifier>{1395e1f8-cd41-4d7d-a8d9-79233f5c4856}</UniqueIdentifier>
+    <Filter Include="Source Files\MFC">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-7890-abcd-ef1234567890}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Layout">
-      <UniqueIdentifier>{2df73845-3feb-4071-bedc-b99c0297d8b8}</UniqueIdentifier>
+    <Filter Include="Source Files\MFC\Dundas">
+      <UniqueIdentifier>{b2c3d4e5-f6a7-8901-bcde-f12345678901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MFC\Layout">
+      <UniqueIdentifier>{c3d4e5f6-a7b8-9012-cdef-123456789012}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{58257b1a-7759-4869-ac49-7cf636212b7c}</UniqueIdentifier>
@@ -30,16 +33,7 @@
     <ClCompile Include="ClearBits.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ClearBitsDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DibWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Filename.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HyperLink.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Options.cpp">
@@ -54,12 +48,6 @@
     <ClCompile Include="SAMPBUF.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SearchDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SeekDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,25 +60,40 @@
     <ClCompile Include="MP3\MCWaveReader.cpp">
       <Filter>Source Files\MP3</Filter>
     </ClCompile>
-    <ClCompile Include="Dundas\OXInteger.cpp">
-      <Filter>Source Files\Dundas</Filter>
+    <ClCompile Include="MFC\ClearBitsDlg.cpp">
+      <Filter>Source Files\MFC</Filter>
     </ClCompile>
-    <ClCompile Include="Dundas\OXStatic.cpp">
-      <Filter>Source Files\Dundas</Filter>
+    <ClCompile Include="MFC\DibWnd.cpp">
+      <Filter>Source Files\MFC</Filter>
     </ClCompile>
-    <ClCompile Include="Dundas\UTBStrOp.cpp">
-      <Filter>Source Files\Dundas</Filter>
+    <ClCompile Include="MFC\HyperLink.cpp">
+      <Filter>Source Files\MFC</Filter>
     </ClCompile>
-    <ClCompile Include="Layout\Layout.c">
-      <Filter>Source Files\Layout</Filter>
+    <ClCompile Include="MFC\SearchDlg.cpp">
+      <Filter>Source Files\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="MFC\SeekDlg.cpp">
+      <Filter>Source Files\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="MFC\Dundas\OXInteger.cpp">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClCompile>
+    <ClCompile Include="MFC\Dundas\OXStatic.cpp">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClCompile>
+    <ClCompile Include="MFC\Dundas\UTBStrOp.cpp">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClCompile>
+    <ClCompile Include="MFC\Layout\Layout.c">
+      <Filter>Source Files\MFC\Layout</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="browsedlg.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="DibWnd.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="ClearBits.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Options.h">
       <Filter>Source Files</Filter>
@@ -98,50 +101,10 @@
     <ClInclude Include="REG.H">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="MP3\id3_int28.h">
-      <Filter>Source Files\MP3</Filter>
-    </ClInclude>
-    <ClInclude Include="MP3\MCWaveReader.h">
-      <Filter>Source Files\MP3</Filter>
-    </ClInclude>
-    <ClInclude Include="Dundas\OXDllExt.h">
-      <Filter>Source Files\Dundas</Filter>
-    </ClInclude>
-    <ClInclude Include="Dundas\OXInteger.h">
-      <Filter>Source Files\Dundas</Filter>
-    </ClInclude>
-    <ClInclude Include="Dundas\OXStatic.h">
-      <Filter>Source Files\Dundas</Filter>
-    </ClInclude>
-
-    <ClInclude Include="Dundas\utbstrop.h">
-      <Filter>Source Files\Dundas</Filter>
-    </ClInclude>
-    <ClInclude Include="Layout\Layout.h">
-      <Filter>Source Files\Layout</Filter>
-    </ClInclude>
-    <ClInclude Include="Layout\Win95ADG.h">
-      <Filter>Source Files\Layout</Filter>
-    </ClInclude>
-    <ClInclude Include="ClearBits.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ClearBitsDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="hyperlink.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SearchDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SeekDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
@@ -150,6 +113,45 @@
     <ClInclude Include="WINPLACE.H">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MP3\id3_int28.h">
+      <Filter>Source Files\MP3</Filter>
+    </ClInclude>
+    <ClInclude Include="MP3\MCWaveReader.h">
+      <Filter>Source Files\MP3</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\ClearBitsDlg.h">
+      <Filter>Source Files\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\DibWnd.h">
+      <Filter>Source Files\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\hyperlink.h">
+      <Filter>Source Files\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\SearchDlg.h">
+      <Filter>Source Files\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\SeekDlg.h">
+      <Filter>Source Files\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\Dundas\OXDllExt.h">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\Dundas\OXInteger.h">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\Dundas\OXStatic.h">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\Dundas\utbstrop.h">
+      <Filter>Source Files\MFC\Dundas</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\Layout\Layout.h">
+      <Filter>Source Files\MFC\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="MFC\Layout\Win95ADG.h">
+      <Filter>Source Files\MFC\Layout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClearBits.rc">
@@ -157,8 +159,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Dundas\OXInteger.inl">
-      <Filter>Source Files\Dundas</Filter>
+    <None Include="MFC\Dundas\OXInteger.inl">
+      <Filter>Source Files\MFC\Dundas</Filter>
     </None>
     <None Include="res\ClearBits.rc2">
       <Filter>Resource Files</Filter>

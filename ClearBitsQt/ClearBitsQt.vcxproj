@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{3A4B5C6D-7E8F-9012-3456-789ABCDEF012}</ProjectGuid>
+    <RootNamespace>ClearBitsQt</RootNamespace>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe -S "$(ProjectDir)." -B "$(ProjectDir)build\Release" -G Ninja -DCMAKE_MAKE_PROGRAM=C:\Qt\Tools\Ninja\ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=C:\Qt\6.10.2\msvc2022_64 &amp;&amp; C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Release"</NMakeBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)build\Release\ClearBitsQt.exe</NMakeOutput>
+    <NMakeCleanCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Release" --target clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Release" --clean-first</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>C:\Qt\6.10.2\msvc2022_64\include;C:\Qt\6.10.2\msvc2022_64\include\QtCore;C:\Qt\6.10.2\msvc2022_64\include\QtGui;C:\Qt\6.10.2\msvc2022_64\include\QtQml;C:\Qt\6.10.2\msvc2022_64\include\QtQuick;C:\Qt\6.10.2\msvc2022_64\include\QtQuickControls2;%(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe -S "$(ProjectDir)." -B "$(ProjectDir)build\Debug" -G Ninja -DCMAKE_MAKE_PROGRAM=C:\Qt\Tools\Ninja\ninja.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=C:\Qt\6.10.2\msvc2022_64 &amp;&amp; C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Debug"</NMakeBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)build\Debug\ClearBitsQt.exe</NMakeOutput>
+    <NMakeCleanCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Debug" --target clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Debug" --clean-first</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>C:\Qt\6.10.2\msvc2022_64\include;C:\Qt\6.10.2\msvc2022_64\include\QtCore;C:\Qt\6.10.2\msvc2022_64\include\QtGui;C:\Qt\6.10.2\msvc2022_64\include\QtQml;C:\Qt\6.10.2\msvc2022_64\include\QtQuick;C:\Qt\6.10.2\msvc2022_64\include\QtQuickControls2;%(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CMakeLists.txt" />
+    <None Include="Main.qml" />
+    <None Include="Screen01.qml" />
+    <None Include="Screen01Form.ui.qml" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
