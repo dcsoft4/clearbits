@@ -35,26 +35,35 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+
+  <!-- Detect Qt install path from PATH: find first entry matching C:\Qt*\msvc2022_64\bin, then go up one level. -->
+  <PropertyGroup>
+    <_QtBinDir>$([System.Text.RegularExpressions.Regex]::Match($([System.Environment]::GetEnvironmentVariable('PATH')), 'C:\\Qt[^;]*msvc2022_64[^;]*bin').Value)</_QtBinDir>
+    <QtInstallPath Condition="'$(_QtBinDir)'!=''">$([System.IO.Path]::GetDirectoryName($(_QtBinDir)))</QtInstallPath>
+    <QtInstallPath Condition="'$(QtInstallPath)'==''">C:\Qt\6.11.0\msvc2022_64</QtInstallPath>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe -S "$(ProjectDir)." -B "$(ProjectDir)build\Release" -G Ninja -DCMAKE_MAKE_PROGRAM=C:\Qt\Tools\Ninja\ninja.exe -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=C:\Qt\6.10.2\msvc2022_64 &amp;&amp; C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Release"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>powershell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)cmake-build.ps1" -Config Release -BuildDir "$(ProjectDir)build\Release" -Target build</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectDir)build\Release\ClearBitsQt.exe</NMakeOutput>
-    <NMakeCleanCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Release" --target clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Release" --clean-first</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>powershell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)cmake-build.ps1" -Config Release -BuildDir "$(ProjectDir)build\Release" -Target clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>powershell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)cmake-build.ps1" -Config Release -BuildDir "$(ProjectDir)build\Release" -Target rebuild</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>C:\Qt\6.10.2\msvc2022_64\include;C:\Qt\6.10.2\msvc2022_64\include\QtCore;C:\Qt\6.10.2\msvc2022_64\include\QtGui;C:\Qt\6.10.2\msvc2022_64\include\QtQml;C:\Qt\6.10.2\msvc2022_64\include\QtQuick;C:\Qt\6.10.2\msvc2022_64\include\QtQuickControls2;%(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(QtInstallPath)\include;$(QtInstallPath)\include\QtCore;$(QtInstallPath)\include\QtGui;$(QtInstallPath)\include\QtQml;$(QtInstallPath)\include\QtQuick;$(QtInstallPath)\include\QtQuickControls2;%(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakeBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe -S "$(ProjectDir)." -B "$(ProjectDir)build\Debug" -G Ninja -DCMAKE_MAKE_PROGRAM=C:\Qt\Tools\Ninja\ninja.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=C:\Qt\6.10.2\msvc2022_64 &amp;&amp; C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Debug"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>powershell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)cmake-build.ps1" -Config Debug -BuildDir "$(ProjectDir)build\Debug" -Target build</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectDir)build\Debug\ClearBitsQt.exe</NMakeOutput>
-    <NMakeCleanCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Debug" --target clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>C:\Qt\Tools\CMake_64\bin\cmake.exe --build "$(ProjectDir)build\Debug" --clean-first</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>powershell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)cmake-build.ps1" -Config Debug -BuildDir "$(ProjectDir)build\Debug" -Target clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>powershell -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)cmake-build.ps1" -Config Debug -BuildDir "$(ProjectDir)build\Debug" -Target rebuild</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>C:\Qt\6.10.2\msvc2022_64\include;C:\Qt\6.10.2\msvc2022_64\include\QtCore;C:\Qt\6.10.2\msvc2022_64\include\QtGui;C:\Qt\6.10.2\msvc2022_64\include\QtQml;C:\Qt\6.10.2\msvc2022_64\include\QtQuick;C:\Qt\6.10.2\msvc2022_64\include\QtQuickControls2;%(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(QtInstallPath)\include;$(QtInstallPath)\include\QtCore;$(QtInstallPath)\include\QtGui;$(QtInstallPath)\include\QtQml;$(QtInstallPath)\include\QtQuick;$(QtInstallPath)\include\QtQuickControls2;%(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cmake-build.ps1" />
     <None Include="CMakeLists.txt" />
     <None Include="Main.qml" />
     <None Include="Screen01.qml" />
