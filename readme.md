@@ -25,9 +25,29 @@ Because the new buffer behavior takes effect almost immediately, the listener ca
 Overall, ClearBits provides a simple and practical way to explore whether differences are perceptible under controlled yet natural listening conditions.  For this reason, adding ABX functionality allows listeners to evaluate whether perceived differences can be detected reliably under controlled comparison.
 
 
+### Initial UI
+
+It is straightforward and simple to re-arrange the existing player controls to make room for a few new ones.
+
+![ABX UI](Doc/abx_controls_drawing.jpg)
+
+* Add a row of "A", "B", "X" labels at the very top
+* The first combobox already exists and becomes "A".  Add a second combobox for "B".  Add a button for "X"
+* Clicking the "A", anywhere in the first combobox or typing keyboard shortcut "A" activates that randomness.
+  * Ditto for "B" and the second combobox.
+* CLicking the 'X" button or typing keyboard shortcut "X" activates that.
+* Clicking "X is A" or "X is "B" shows a message box popup:
+  * Whether it is correct
+  * e.g. "3 of 5" results are correct
+  * Links
+    * Reset X <-- randomly re-assigns X to either A or B
+    * New Test <-- resets count of correct and attempts shown above (e.g. sets above "3 of 5" to "0 of 0" before next answer is recorded)
+* Move the Prev/Play/Next next to the Seek buttons
+
+
 ### Sample UI
 
-Here is a potential UI for the ABX extension.
+Here is more complete potential UI for the ABX extension.
 
 ![ABX UI](Doc/abx_ui.png)
 
