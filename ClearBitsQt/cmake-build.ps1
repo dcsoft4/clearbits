@@ -26,6 +26,56 @@ param(
 )
 
 $CMake = "C:\Qt\Tools\CMake_64\bin\cmake.exe"
+$ExpectedGenerator = "NMake Makefiles"
+
+function Get-CachedGenerator {
+    param(
+        [string]$CachePath
+    )
+
+    if (-not (Test-Path $CachePath)) {
+        return $null
+    }
+
+    $GeneratorLine = Select-String -Path $CachePath -Pattern '^CMAKE_GENERATOR:INTERNAL=' | Select-Object -First 1
+    if (-not $GeneratorLine) {
+        return $null
+    }
+
+    return ($GeneratorLine.Line -replace '^CMAKE_GENERATOR:INTERNAL=', '').Trim()
+}
+
+function Reset-BuildTreeForGeneratorChange {
+    param(
+        [string]$BuildDir,
+        [string]$CachedGenerator,
+        [string]$ExpectedGenerator
+    )
+
+    Write-Host "Reconfiguring $BuildDir because cached generator '$CachedGenerator' does not match '$ExpectedGenerator'."
+
+    $PathsToRemove = @(
+        (Join-Path $BuildDir "CMakeCache.txt"),
+        (Join-Path $BuildDir "CMakeFiles"),
+        (Join-Path $BuildDir "build.ninja"),
+        (Join-Path $BuildDir ".ninja_deps"),
+        (Join-Path $BuildDir ".ninja_log"),
+        (Join-Path $BuildDir "cmake_install.cmake")
+    )
+
+    foreach ($Path in $PathsToRemove) {
+        if (Test-Path $Path) {
+            Remove-Item -LiteralPath $Path -Recurse -Force
+        }
+    }
+}
+
+$CachePath = Join-Path $BuildDir "CMakeCache.txt"
+$CachedGenerator = Get-CachedGenerator -CachePath $CachePath
+
+if ($CachedGenerator -and $CachedGenerator -ne $ExpectedGenerator) {
+    Reset-BuildTreeForGeneratorChange -BuildDir $BuildDir -CachedGenerator $CachedGenerator -ExpectedGenerator $ExpectedGenerator
+}
 
 # Clean and rebuild don't need Qt detection — the build dir already has a configured cache.
 if ($Target -eq "clean") {
@@ -58,7 +108,7 @@ Write-Host "Using Qt at $QtPrefix"
 
 # Use NMake Makefiles — available in any VS developer environment and avoids a
 # CMake 3.30+/Ninja incompatibility where $Config appears in rule names.
-& $CMake -S "$PSScriptRoot" -B $BuildDir -G "NMake Makefiles" `
+& $CMake -S "$PSScriptRoot" -B $BuildDir -G $ExpectedGenerator `
     -DCMAKE_BUILD_TYPE=$Config `
     -DCMAKE_PREFIX_PATH=$QtPrefix
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
